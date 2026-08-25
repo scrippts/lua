@@ -1,1343 +1,419 @@
---========================================================--
---                    SOFIYA HUB
---              PREMIUM LUCK EDITION
---                 MOBILE OPTIMIZED
---                 SMOOTH UI VERSION
---========================================================--
+--// SOFIYA HUB SCRIPTS
+--// RNG / LUCKY BLOCK LOADING UI
+--// Lightweight + Smooth + Permanent 98%
 
 local Players = game:GetService("Players")
 local TweenService = game:GetService("TweenService")
-local UserInputService = game:GetService("UserInputService")
 
-local Player = Players.LocalPlayer
-local PlayerGui = Player:WaitForChild("PlayerGui")
+local player = Players.LocalPlayer
+local playerGui = player:WaitForChild("PlayerGui")
 
---========================================================--
--- REMOVE OLD VERSION
---========================================================--
+--==================================================
+-- SETTINGS
+--==================================================
 
-local OldHub = PlayerGui:FindFirstChild("SofiyaHub")
-if OldHub then
-	OldHub:Destroy()
+local FAST_TIME = 8
+local MID_TIME = 20
+local SLOW_TIME = 45
+local FINAL_TIME = 60
+
+--==================================================
+-- GUI
+--==================================================
+
+local gui = Instance.new("ScreenGui")
+gui.Name = "SofiyaHubLoading"
+gui.IgnoreGuiInset = true
+gui.ResetOnSpawn = false
+gui.DisplayOrder = 999
+gui.Parent = playerGui
+
+-- Background
+local background = Instance.new("Frame")
+background.Size = UDim2.fromScale(1, 1)
+background.BackgroundColor3 = Color3.fromRGB(5, 6, 14)
+background.BorderSizePixel = 0
+background.Parent = gui
+
+local bgGradient = Instance.new("UIGradient")
+bgGradient.Color = ColorSequence.new({
+	ColorSequenceKeypoint.new(0, Color3.fromRGB(7, 8, 18)),
+	ColorSequenceKeypoint.new(0.5, Color3.fromRGB(19, 7, 35)),
+	ColorSequenceKeypoint.new(1, Color3.fromRGB(5, 12, 25))
+})
+bgGradient.Rotation = 35
+bgGradient.Parent = background
+
+--==================================================
+-- LIGHTWEIGHT PARTICLES
+--==================================================
+
+local particleFolder = Instance.new("Folder")
+particleFolder.Name = "Particles"
+particleFolder.Parent = background
+
+for i = 1, 14 do
+	local p = Instance.new("Frame")
+	p.Name = "Particle"
+	p.Size = UDim2.fromOffset(math.random(2, 4), math.random(2, 4))
+	p.Position = UDim2.fromScale(
+		math.random(5, 95) / 100,
+		math.random(5, 95) / 100
+	)
+	p.BackgroundColor3 =
+		(i % 2 == 0)
+		and Color3.fromRGB(150, 80, 255)
+		or Color3.fromRGB(70, 170, 255)
+
+	p.BackgroundTransparency = math.random(45, 75) / 100
+	p.BorderSizePixel = 0
+	p.Parent = particleFolder
+
+	local corner = Instance.new("UICorner")
+	corner.CornerRadius = UDim.new(1, 0)
+	corner.Parent = p
+
+	-- Each particle animates only occasionally
+	task.spawn(function()
+		while gui.Parent do
+			local target = UDim2.fromScale(
+				math.random(5, 95) / 100,
+				math.random(5, 95) / 100
+			)
+
+			local tween = TweenService:Create(
+				p,
+				TweenInfo.new(
+					math.random(4, 7),
+					Enum.EasingStyle.Sine,
+					Enum.EasingDirection.InOut
+				),
+				{
+					Position = target,
+					BackgroundTransparency = math.random(50, 82) / 100
+				}
+			)
+
+			tween:Play()
+			tween.Completed:Wait()
+		end
+	end)
 end
 
-local OldLoading = PlayerGui:FindFirstChild("SofiyaLoading")
-if OldLoading then
-	OldLoading:Destroy()
-end
+--==================================================
+-- MAIN PANEL
+--==================================================
 
---========================================================--
--- COLORS
---========================================================--
+local main = Instance.new("Frame")
+main.AnchorPoint = Vector2.new(0.5, 0.5)
+main.Position = UDim2.fromScale(0.5, 0.5)
+main.Size = UDim2.fromScale(0.43, 0.29)
+main.BackgroundColor3 = Color3.fromRGB(12, 12, 23)
+main.BackgroundTransparency = 0.05
+main.BorderSizePixel = 0
+main.Parent = background
 
-local C = {
-	BG = Color3.fromRGB(4, 7, 13),
-	CARD = Color3.fromRGB(12, 17, 28),
-	CARD2 = Color3.fromRGB(17, 23, 37),
+local mainCorner = Instance.new("UICorner")
+mainCorner.CornerRadius = UDim.new(0, 22)
+mainCorner.Parent = main
 
-	BLUE = Color3.fromRGB(45, 135, 255),
-	BLUE2 = Color3.fromRGB(85, 75, 255),
+local mainStroke = Instance.new("UIStroke")
+mainStroke.Color = Color3.fromRGB(135, 75, 255)
+mainStroke.Thickness = 1.5
+mainStroke.Transparency = 0.3
+mainStroke.Parent = main
 
-	GREEN = Color3.fromRGB(35, 220, 135),
+--==================================================
+-- TOP NEON LINE
+--==================================================
 
-	GOLD = Color3.fromRGB(255, 190, 55),
-	ORANGE = Color3.fromRGB(255, 105, 45),
+local topLine = Instance.new("Frame")
+topLine.AnchorPoint = Vector2.new(0.5, 0)
+topLine.Position = UDim2.fromScale(0.5, 0)
+topLine.Size = UDim2.new(0.32, 0, 0, 3)
+topLine.BackgroundColor3 = Color3.fromRGB(155, 80, 255)
+topLine.BorderSizePixel = 0
+topLine.Parent = main
 
-	WHITE = Color3.fromRGB(245, 248, 255),
-	TEXT = Color3.fromRGB(185, 197, 218),
-	MUTED = Color3.fromRGB(100, 116, 143),
+local lineCorner = Instance.new("UICorner")
+lineCorner.CornerRadius = UDim.new(1, 0)
+lineCorner.Parent = topLine
 
-	BORDER = Color3.fromRGB(45, 65, 95),
-	RED = Color3.fromRGB(235, 65, 75)
+local lineGradient = Instance.new("UIGradient")
+lineGradient.Color = ColorSequence.new({
+	ColorSequenceKeypoint.new(0, Color3.fromRGB(80, 140, 255)),
+	ColorSequenceKeypoint.new(0.5, Color3.fromRGB(190, 70, 255)),
+	ColorSequenceKeypoint.new(1, Color3.fromRGB(80, 140, 255))
+})
+lineGradient.Parent = topLine
+
+--==================================================
+-- LOGO
+--==================================================
+
+local logo = Instance.new("Frame")
+logo.AnchorPoint = Vector2.new(0.5, 0)
+logo.Position = UDim2.fromScale(0.5, 0.09)
+logo.Size = UDim2.fromOffset(58, 58)
+logo.BackgroundColor3 = Color3.fromRGB(27, 16, 48)
+logo.BorderSizePixel = 0
+logo.Parent = main
+
+local logoCorner = Instance.new("UICorner")
+logoCorner.CornerRadius = UDim.new(1, 0)
+logoCorner.Parent = logo
+
+local logoStroke = Instance.new("UIStroke")
+logoStroke.Color = Color3.fromRGB(170, 85, 255)
+logoStroke.Thickness = 2
+logoStroke.Parent = logo
+
+local logoText = Instance.new("TextLabel")
+logoText.Size = UDim2.fromScale(1, 1)
+logoText.BackgroundTransparency = 1
+logoText.Text = "S"
+logoText.Font = Enum.Font.GothamBlack
+logoText.TextSize = 28
+logoText.TextColor3 = Color3.fromRGB(205, 155, 255)
+logoText.Parent = logo
+
+--==================================================
+-- TITLE
+--==================================================
+
+local title = Instance.new("TextLabel")
+title.AnchorPoint = Vector2.new(0.5, 0)
+title.Position = UDim2.fromScale(0.5, 0.35)
+title.Size = UDim2.new(0.9, 0, 0, 30)
+title.BackgroundTransparency = 1
+title.Text = "SOFIYA HUB"
+title.Font = Enum.Font.GothamBlack
+title.TextSize = 25
+title.TextColor3 = Color3.fromRGB(245, 245, 255)
+title.Parent = main
+
+local subtitle = Instance.new("TextLabel")
+subtitle.AnchorPoint = Vector2.new(0.5, 0)
+subtitle.Position = UDim2.fromScale(0.5, 0.47)
+subtitle.Size = UDim2.new(0.9, 0, 0, 20)
+subtitle.BackgroundTransparency = 1
+subtitle.Text = "RNG • LUCKY BLOCK SCRIPTS"
+subtitle.Font = Enum.Font.GothamBold
+subtitle.TextSize = 11
+subtitle.TextColor3 = Color3.fromRGB(155, 115, 255)
+subtitle.Parent = main
+
+--==================================================
+-- STATUS
+--==================================================
+
+local status = Instance.new("TextLabel")
+status.AnchorPoint = Vector2.new(0.5, 0)
+status.Position = UDim2.fromScale(0.5, 0.59)
+status.Size = UDim2.new(0.85, 0, 0, 20)
+status.BackgroundTransparency = 1
+status.Text = "Loading RNG luck..."
+status.Font = Enum.Font.GothamMedium
+status.TextSize = 12
+status.TextColor3 = Color3.fromRGB(160, 160, 180)
+status.Parent = main
+
+--==================================================
+-- PROGRESS BAR
+--==================================================
+
+local progressBG = Instance.new("Frame")
+progressBG.AnchorPoint = Vector2.new(0.5, 0)
+progressBG.Position = UDim2.fromScale(0.5, 0.72)
+progressBG.Size = UDim2.new(0.78, 0, 0, 7)
+progressBG.BackgroundColor3 = Color3.fromRGB(32, 30, 43)
+progressBG.BorderSizePixel = 0
+progressBG.ClipsDescendants = true
+progressBG.Parent = main
+
+local progressCorner = Instance.new("UICorner")
+progressCorner.CornerRadius = UDim.new(1, 0)
+progressCorner.Parent = progressBG
+
+local progress = Instance.new("Frame")
+progress.Size = UDim2.new(0, 0, 1, 0)
+progress.BackgroundColor3 = Color3.fromRGB(150, 75, 255)
+progress.BorderSizePixel = 0
+progress.Parent = progressBG
+
+local progressCorner2 = Instance.new("UICorner")
+progressCorner2.CornerRadius = UDim.new(1, 0)
+progressCorner2.Parent = progress
+
+local progressGradient = Instance.new("UIGradient")
+progressGradient.Color = ColorSequence.new({
+	ColorSequenceKeypoint.new(0, Color3.fromRGB(85, 100, 255)),
+	ColorSequenceKeypoint.new(0.5, Color3.fromRGB(175, 70, 255)),
+	ColorSequenceKeypoint.new(1, Color3.fromRGB(75, 190, 255))
+})
+progressGradient.Parent = progress
+
+--==================================================
+-- PERCENTAGE
+--==================================================
+
+local percent = Instance.new("TextLabel")
+percent.AnchorPoint = Vector2.new(1, 0)
+percent.Position = UDim2.fromScale(0.89, 0.78)
+percent.Size = UDim2.new(0.2, 0, 0, 20)
+percent.BackgroundTransparency = 1
+percent.Text = "0%"
+percent.Font = Enum.Font.GothamBold
+percent.TextSize = 11
+percent.TextColor3 = Color3.fromRGB(190, 165, 255)
+percent.TextXAlignment = Enum.TextXAlignment.Right
+percent.Parent = main
+
+--==================================================
+-- STATUS MESSAGES
+--==================================================
+
+local messages = {
+	{0,  "Loading RNG luck..."},
+	{8,  "Calibrating lucky rolls..."},
+	{18, "Calculating Lucky Block luck..."},
+	{25, "Optimizing luck boost..."},
+	{35, "Analyzing RNG patterns..."},
+	{50, "Applying Lucky Block boost..."},
+	{65, "Maximizing lucky rolls..."},
+	{78, "Syncing RNG luck tables..."},
+	{88, "Increasing Lucky Block luck..."},
+	{93, "Finalizing luck boost..."},
+	{97, "Almost ready..."},
+	{98, "98% • Final luck optimization..."}
 }
 
---========================================================--
--- HELPERS
---========================================================--
+local function updateStatus(value)
+	local current = messages[1][2]
 
-local function Tween(obj, time, props, style, direction)
-	local info = TweenInfo.new(
-		time,
-		style or Enum.EasingStyle.Quint,
-		direction or Enum.EasingDirection.Out
+	for _, data in ipairs(messages) do
+		if value >= data[1] then
+			current = data[2]
+		end
+	end
+
+	status.Text = current
+end
+
+--==================================================
+-- SMOOTH PROGRESS FUNCTION
+--==================================================
+
+local function animateTo(target, duration)
+	local tween = TweenService:Create(
+		progress,
+		TweenInfo.new(
+			duration,
+			Enum.EasingStyle.Quart,
+			Enum.EasingDirection.Out
+		),
+		{
+			Size = UDim2.new(target / 100, 0, 1, 0)
+		}
 	)
 
-	local tween = TweenService:Create(obj, info, props)
 	tween:Play()
 
-	return tween
-end
+	local start = 0
 
-local function Corner(obj, radius)
-	local c = Instance.new("UICorner")
-	c.CornerRadius = UDim.new(0, radius)
-	c.Parent = obj
-	return c
-end
-
-local function Stroke(obj, color, transparency, thickness)
-	local s = Instance.new("UIStroke")
-	s.Color = color
-	s.Transparency = transparency or 0
-	s.Thickness = thickness or 1
-	s.Parent = obj
-	return s
-end
-
-local function Gradient(obj, colors, rotation)
-	local g = Instance.new("UIGradient")
-	g.Color = ColorSequence.new(colors)
-	g.Rotation = rotation or 0
-	g.Parent = obj
-	return g
-end
-
---========================================================--
--- LOADING SCREEN
---========================================================--
-
-local function CreateLoadingScreen()
-
-	local LoadingGui = Instance.new("ScreenGui")
-	LoadingGui.Name = "SofiyaLoading"
-	LoadingGui.ResetOnSpawn = false
-	LoadingGui.IgnoreGuiInset = true
-	LoadingGui.DisplayOrder = 999
-	LoadingGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
-	LoadingGui.Parent = PlayerGui
-
-	--==================================================--
-	-- BACKGROUND
-	--==================================================--
-
-	local background = Instance.new("Frame")
-	background.Size = UDim2.fromScale(1, 1)
-	background.BackgroundColor3 = C.BG
-	background.BorderSizePixel = 0
-	background.Parent = LoadingGui
-
-	Gradient(background, {
-		ColorSequenceKeypoint.new(0, Color3.fromRGB(3, 6, 12)),
-		ColorSequenceKeypoint.new(.5, Color3.fromRGB(6, 12, 24)),
-		ColorSequenceKeypoint.new(1, Color3.fromRGB(3, 6, 12))
-	}, 90)
-
-	--==================================================--
-	-- TOP TITLE
-	--==================================================--
-
-	local brand = Instance.new("TextLabel")
-	brand.AnchorPoint = Vector2.new(.5, 0)
-	brand.Position = UDim2.new(.5, 0, .055, 0)
-	brand.Size = UDim2.new(.85, 0, 0, 40)
-	brand.BackgroundTransparency = 1
-	brand.Text = "SOFIYA HUB"
-	brand.TextColor3 = C.WHITE
-	brand.TextScaled = true
-	brand.Font = Enum.Font.GothamBlack
-	brand.Parent = background
-
-	local brandLimit = Instance.new("UITextSizeConstraint")
-	brandLimit.MinTextSize = 20
-	brandLimit.MaxTextSize = 30
-	brandLimit.Parent = brand
-
-	local brandLine = Instance.new("Frame")
-	brandLine.AnchorPoint = Vector2.new(.5, 0)
-	brandLine.Position = UDim2.new(.5, 0, .125, 0)
-	brandLine.Size = UDim2.new(.18, 0, 0, 2)
-	brandLine.BackgroundColor3 = C.BLUE
-	brandLine.BorderSizePixel = 0
-	brandLine.Parent = background
-
-	Corner(brandLine, 4)
-
-	--==================================================--
-	-- CENTER
-	--==================================================--
-
-	local center = Instance.new("Frame")
-	center.AnchorPoint = Vector2.new(.5, .5)
-	center.Position = UDim2.fromScale(.5, .49)
-	center.Size = UDim2.new(.90, 0, .76, 0)
-	center.BackgroundTransparency = 1
-	center.Parent = background
-
-	local centerAspect = Instance.new("UIAspectRatioConstraint")
-	centerAspect.AspectRatio = .86
-	centerAspect.Parent = center
-
-	local centerLimit = Instance.new("UISizeConstraint")
-	centerLimit.MinSize = Vector2.new(280, 340)
-	centerLimit.MaxSize = Vector2.new(520, 600)
-	centerLimit.Parent = center
-
-	--==================================================--
-	-- LOGO GLOW
-	--==================================================--
-
-	local logoGlow = Instance.new("Frame")
-	logoGlow.AnchorPoint = Vector2.new(.5, .5)
-	logoGlow.Position = UDim2.new(.5, 0, .27, 0)
-	logoGlow.Size = UDim2.new(.43, 0, .43, 0)
-	logoGlow.BackgroundColor3 = C.BLUE
-	logoGlow.BackgroundTransparency = .94
-	logoGlow.BorderSizePixel = 0
-	logoGlow.Parent = center
-
-	Corner(logoGlow, 100)
-
-	--==================================================--
-	-- LOGO
-	--==================================================--
-
-	local logo = Instance.new("Frame")
-	logo.AnchorPoint = Vector2.new(.5, .5)
-	logo.Position = UDim2.new(.5, 0, .27, 0)
-	logo.Size = UDim2.new(.31, 0, .31, 0)
-	logo.BackgroundColor3 = Color3.fromRGB(8, 16, 31)
-	logo.BorderSizePixel = 0
-	logo.Parent = center
-
-	Corner(logo, 100)
-	Stroke(logo, C.BLUE, .18, 2)
-
-	local logoInner = Instance.new("Frame")
-	logoInner.AnchorPoint = Vector2.new(.5, .5)
-	logoInner.Position = UDim2.fromScale(.5, .5)
-	logoInner.Size = UDim2.new(.82, 0, .82, 0)
-	logoInner.BackgroundColor3 = Color3.fromRGB(12, 27, 50)
-	logoInner.BorderSizePixel = 0
-	logoInner.Parent = logo
-
-	Corner(logoInner, 100)
-
-	--==================================================--
-	-- BRAIN
-	--==================================================--
-
-	local brain = Instance.new("TextLabel")
-	brain.AnchorPoint = Vector2.new(.5, .5)
-	brain.Position = UDim2.fromScale(.5, .5)
-	brain.Size = UDim2.new(.82, 0, .82, 0)
-	brain.BackgroundTransparency = 1
-	brain.Text = "🧠"
-	brain.TextScaled = true
-	brain.Font = Enum.Font.GothamBold
-	brain.Parent = logoInner
-
-	--==================================================--
-	-- ROTATING RING
-	--==================================================--
-
-	local ring = Instance.new("Frame")
-	ring.AnchorPoint = Vector2.new(.5, .5)
-	ring.Position = UDim2.new(.5, 0, .27, 0)
-	ring.Size = UDim2.new(.36, 0, .36, 0)
-	ring.BackgroundTransparency = 1
-	ring.Parent = center
-
-	Corner(ring, 100)
-	Stroke(ring, C.BLUE, .5, 2)
-
-	--==================================================--
-	-- EDITION
-	--==================================================--
-
-	local edition = Instance.new("TextLabel")
-	edition.AnchorPoint = Vector2.new(.5, .5)
-	edition.Position = UDim2.new(.5, 0, .48, 0)
-	edition.Size = UDim2.new(.9, 0, 0, 25)
-	edition.BackgroundTransparency = 1
-	edition.Text = "PREMIUM LUCK EDITION"
-	edition.TextColor3 = C.BLUE
-	edition.TextScaled = true
-	edition.Font = Enum.Font.GothamBold
-	edition.Parent = center
-
-	local editionLimit = Instance.new("UITextSizeConstraint")
-	editionLimit.MinTextSize = 9
-	editionLimit.MaxTextSize = 14
-	editionLimit.Parent = edition
-
-	--==================================================--
-	-- STATUS
-	--==================================================--
-
-	local status = Instance.new("TextLabel")
-	status.AnchorPoint = Vector2.new(.5, .5)
-	status.Position = UDim2.new(.5, 0, .555, 0)
-	status.Size = UDim2.new(.92, 0, 0, 26)
-	status.BackgroundTransparency = 1
-	status.Text = "Initializing neural luck system..."
-	status.TextColor3 = C.TEXT
-	status.TextScaled = true
-	status.Font = Enum.Font.Gotham
-	status.Parent = center
-
-	local statusLimit = Instance.new("UITextSizeConstraint")
-	statusLimit.MinTextSize = 8
-	statusLimit.MaxTextSize = 12
-	statusLimit.Parent = status
-
-	--==================================================--
-	-- PROGRESS BAR
-	--==================================================--
-
-	local barBack = Instance.new("Frame")
-	barBack.AnchorPoint = Vector2.new(.5, .5)
-	barBack.Position = UDim2.new(.5, 0, .66, 0)
-	barBack.Size = UDim2.new(.84, 0, 0, 8)
-	barBack.BackgroundColor3 = Color3.fromRGB(23, 32, 48)
-	barBack.BorderSizePixel = 0
-	barBack.Parent = center
-
-	Corner(barBack, 10)
-
-	local bar = Instance.new("Frame")
-	bar.Size = UDim2.new(0, 0, 1, 0)
-	bar.BackgroundColor3 = C.BLUE
-	bar.BorderSizePixel = 0
-	bar.Parent = barBack
-
-	Corner(bar, 10)
-
-	Gradient(bar, {
-		ColorSequenceKeypoint.new(0, C.BLUE),
-		ColorSequenceKeypoint.new(.5, Color3.fromRGB(65, 100, 255)),
-		ColorSequenceKeypoint.new(1, C.BLUE2)
-	}, 0)
-
-	--==================================================--
-	-- PERCENT
-	--==================================================--
-
-	local percentage = Instance.new("TextLabel")
-	percentage.AnchorPoint = Vector2.new(.5, .5)
-	percentage.Position = UDim2.new(.5, 0, .745, 0)
-	percentage.Size = UDim2.new(.8, 0, 0, 30)
-	percentage.BackgroundTransparency = 1
-	percentage.Text = "0%"
-	percentage.TextColor3 = C.WHITE
-	percentage.TextScaled = true
-	percentage.Font = Enum.Font.GothamBold
-	percentage.Parent = center
-
-	local percentLimit = Instance.new("UITextSizeConstraint")
-	percentLimit.MinTextSize = 12
-	percentLimit.MaxTextSize = 17
-	percentLimit.Parent = percentage
-
-	--==================================================--
-	-- DETAIL
-	--==================================================--
-
-	local detail = Instance.new("TextLabel")
-	detail.AnchorPoint = Vector2.new(.5, .5)
-	detail.Position = UDim2.new(.5, 0, .82, 0)
-	detail.Size = UDim2.new(.9, 0, 0, 20)
-	detail.BackgroundTransparency = 1
-	detail.Text = "SYSTEM VERIFICATION"
-	detail.TextColor3 = C.MUTED
-	detail.TextScaled = true
-	detail.Font = Enum.Font.GothamSemibold
-	detail.Parent = center
-
-	local detailLimit = Instance.new("UITextSizeConstraint")
-	detailLimit.MinTextSize = 7
-	detailLimit.MaxTextSize = 10
-	detailLimit.Parent = detail
-
-	--==================================================--
-	-- FOOTER
-	--==================================================--
-
-	local footer = Instance.new("TextLabel")
-	footer.AnchorPoint = Vector2.new(.5, .5)
-	footer.Position = UDim2.new(.5, 0, .91, 0)
-	footer.Size = UDim2.new(.9, 0, 0, 18)
-	footer.BackgroundTransparency = 1
-	footer.Text = "SOFIYA HUB  •  SECURE INITIALIZATION"
-	footer.TextColor3 = C.MUTED
-	footer.TextScaled = true
-	footer.Font = Enum.Font.GothamSemibold
-	footer.Parent = center
-
-	local footerLimit = Instance.new("UITextSizeConstraint")
-	footerLimit.MinTextSize = 6
-	footerLimit.MaxTextSize = 9
-	footerLimit.Parent = footer
-
-	--==================================================--
-	-- SMOOTH BRAIN ANIMATION
-	--==================================================--
+	-- Lightweight percentage updater
+	local startSize = progress.Size.X.Scale * 100
 
 	task.spawn(function()
+		local elapsed = 0
 
-		while LoadingGui.Parent do
+		while elapsed < duration do
+			elapsed += task.wait()
 
-			Tween(
-				brain,
-				1.25,
-				{
-					TextTransparency = .12
-				},
-				Enum.EasingStyle.Sine
-			)
+			local alpha = math.clamp(elapsed / duration, 0, 1)
+			local eased = 1 - (1 - alpha)^3
+			local value = startSize + (target - startSize) * eased
 
-			Tween(
-				logoGlow,
-				1.25,
-				{
-					BackgroundTransparency = .88
-				},
-				Enum.EasingStyle.Sine
-			)
-
-			task.wait(1.25)
-
-			Tween(
-				brain,
-				1.25,
-				{
-					TextTransparency = 0
-				},
-				Enum.EasingStyle.Sine
-			)
-
-			Tween(
-				logoGlow,
-				1.25,
-				{
-					BackgroundTransparency = .94
-				},
-				Enum.EasingStyle.Sine
-			)
-
-			task.wait(1.25)
+			percent.Text = math.floor(value) .. "%"
+			updateStatus(value)
 		end
 
+		percent.Text = target .. "%"
+		updateStatus(target)
 	end)
 
-	--==================================================--
-	-- SMOOTH RING
-	--==================================================--
-
-	task.spawn(function()
-
-		while LoadingGui.Parent do
-
-			local rotationTween = Tween(
-				ring,
-				3.5,
-				{
-					Rotation = ring.Rotation + 360
-				},
-				Enum.EasingStyle.Linear
-			)
-
-			rotationTween.Completed:Wait()
-
-		end
-
-	end)
-
-	--==================================================--
-	-- PROGRESS SEQUENCE
-	--==================================================--
-
-	task.spawn(function()
-
-		local stages = {
-			{8, "Starting Sofiya Hub..."},
-			{17, "Connecting to neural interface..."},
-			{27, "Scanning RNG environment..."},
-			{38, "Loading probability engine..."},
-			{49, "Preparing luck modules..."},
-			{59, "Synchronizing boost system..."},
-			{69, "Calibrating lucky block engine..."},
-			{78, "Optimizing neural parameters..."},
-			{86, "Verifying premium configuration..."},
-			{92, "Finalizing system components..."},
-			{96, "Performing final verification..."},
-			{99, "Finalizing initialization..."}
-		}
-
-		local current = 0
-
-		for _, stage in ipairs(stages) do
-
-			local target = stage[1]
-			local message = stage[2]
-
-			status.Text = message
-
-			local duration = math.random(3, 5)
-
-			local progressValue = Instance.new("NumberValue")
-			progressValue.Value = current
-
-			local connection = progressValue.Changed:Connect(function(value)
-
-				percentage.Text = math.floor(value) .. "%"
-
-				bar.Size = UDim2.new(
-					value / 100,
-					0,
-					1,
-					0
-				)
-
-			end)
-
-			local progressTween = Tween(
-				progressValue,
-				duration,
-				{
-					Value = target
-				},
-				Enum.EasingStyle.Sine
-			)
-
-			progressTween.Completed:Wait()
-
-			connection:Disconnect()
-			progressValue:Destroy()
-
-			current = target
-
-			percentage.Text = target .. "%"
-
-			bar.Size = UDim2.new(
-				target / 100,
-				0,
-				1,
-				0
-			)
-
-			task.wait(1.2)
-
-		end
-
-		--==================================================--
-		-- 99% HOLD
-		--==================================================--
-
-		percentage.Text = "99%"
-		status.Text = "Finalizing initialization..."
-		detail.Text = "SYSTEM VERIFICATION IN PROGRESS"
-
-		bar.Size = UDim2.new(
-			.99,
-			0,
-			1,
-			0
-		)
-
-		-- Very slow subtle 99% pulse
-		task.spawn(function()
-
-			while LoadingGui.Parent and percentage.Text == "99%" do
-
-				Tween(
-					bar,
-					1.8,
-					{
-						BackgroundTransparency = .22
-					},
-					Enum.EasingStyle.Sine
-				)
-
-				task.wait(1.8)
-
-				Tween(
-					bar,
-					1.8,
-					{
-						BackgroundTransparency = 0
-					},
-					Enum.EasingStyle.Sine
-				)
-
-				task.wait(1.8)
-
-			end
-
-		end)
-
-		--==================================================--
-		-- EXACT 4 HOUR WAIT
-		--==================================================--
-
-		task.wait(14400)
-
-		--==================================================--
-		-- 100%
-		--==================================================--
-
-		status.Text = "Initialization complete."
-		detail.Text = "SOFIYA HUB READY"
-
-		local finalValue = Instance.new("NumberValue")
-		finalValue.Value = 99
-
-		local finalConnection = finalValue.Changed:Connect(function(value)
-
-			percentage.Text = math.floor(value) .. "%"
-
-			bar.Size = UDim2.new(
-				value / 100,
-				0,
-				1,
-				0
-			)
-
-		end)
-
-		local finalTween = Tween(
-			finalValue,
-			1.4,
-			{
-				Value = 100
-			},
-			Enum.EasingStyle.Quint
-		)
-
-		finalTween.Completed:Wait()
-
-		finalConnection:Disconnect()
-		finalValue:Destroy()
-
-		percentage.Text = "100%"
-
-		Tween(
-			percentage,
-			.4,
-			{
-				TextColor3 = C.GREEN
-			},
-			Enum.EasingStyle.Sine
-		)
-
-		task.wait(1)
-
-		--==================================================--
-		-- SMOOTH FADE
-		--==================================================--
-
-		Tween(
-			background,
-			.8,
-			{
-				BackgroundTransparency = 1
-			},
-			Enum.EasingStyle.Sine
-		)
-
-		Tween(
-			brand,
-			.6,
-			{
-				TextTransparency = 1
-			},
-			Enum.EasingStyle.Sine
-		)
-
-		Tween(
-			brandLine,
-			.6,
-			{
-				BackgroundTransparency = 1
-			},
-			Enum.EasingStyle.Sine
-		)
-
-		for _, obj in ipairs(center:GetDescendants()) do
-
-			if obj:IsA("TextLabel") then
-
-				Tween(
-					obj,
-					.6,
-					{
-						TextTransparency = 1
-					},
-					Enum.EasingStyle.Sine
-				)
-
-			elseif obj:IsA("Frame") then
-
-				Tween(
-					obj,
-					.6,
-					{
-						BackgroundTransparency = 1
-					},
-					Enum.EasingStyle.Sine
-				)
-
-			end
-
-		end
-
-		task.wait(.9)
-
-		LoadingGui:Destroy()
-
-	end)
-
-	return LoadingGui
+	tween.Completed:Wait()
 end
 
---========================================================--
--- START LOADING
---========================================================--
-
-CreateLoadingScreen()
-
---========================================================--
--- MAIN HUB
---========================================================--
-
-local Gui = Instance.new("ScreenGui")
-Gui.Name = "SofiyaHub"
-Gui.ResetOnSpawn = false
-Gui.IgnoreGuiInset = true
-Gui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
-Gui.DisplayOrder = 10
-Gui.Parent = PlayerGui
-
---========================================================--
--- DRAG
---========================================================--
-
-local function MakeDraggable(handle, frame)
-
-	local dragging = false
-	local dragStart
-	local startPos
-
-	handle.InputBegan:Connect(function(input)
-
-		if input.UserInputType == Enum.UserInputType.MouseButton1
-			or input.UserInputType == Enum.UserInputType.Touch then
-
-			dragging = true
-			dragStart = input.Position
-			startPos = frame.Position
-
-		end
-
-	end)
-
-	UserInputService.InputChanged:Connect(function(input)
-
-		if not dragging then
-			return
-		end
-
-		if input.UserInputType == Enum.UserInputType.MouseMovement
-			or input.UserInputType == Enum.UserInputType.Touch then
-
-			local delta = input.Position - dragStart
-
-			frame.Position = UDim2.new(
-				startPos.X.Scale,
-				startPos.X.Offset + delta.X,
-
-				startPos.Y.Scale,
-				startPos.Y.Offset + delta.Y
-			)
-
-		end
-
-	end)
-
-	UserInputService.InputEnded:Connect(function(input)
-
-		if input.UserInputType == Enum.UserInputType.MouseButton1
-			or input.UserInputType == Enum.UserInputType.Touch then
-
-			dragging = false
-
-		end
-
-	end)
-end
-
---========================================================--
--- CARD LOADING
---========================================================--
-
-local function CreateCardLoading(parent, accent)
-
-	local overlay = Instance.new("Frame")
-	overlay.Size = UDim2.fromScale(1, 1)
-	overlay.BackgroundColor3 = C.BG
-	overlay.BackgroundTransparency = .08
-	overlay.Visible = false
-	overlay.ZIndex = 100
-	overlay.Parent = parent
-
-	Corner(overlay, 18)
-
-	local spinner = Instance.new("TextLabel")
-	spinner.AnchorPoint = Vector2.new(.5, .5)
-	spinner.Position = UDim2.new(.5, 0, .36, 0)
-	spinner.Size = UDim2.new(0, 45, 0, 45)
-	spinner.BackgroundTransparency = 1
-	spinner.Text = "◌"
-	spinner.TextColor3 = accent
-	spinner.TextSize = 38
-	spinner.Font = Enum.Font.GothamBold
-	spinner.ZIndex = 101
-	spinner.Parent = overlay
-
-	local title = Instance.new("TextLabel")
-	title.AnchorPoint = Vector2.new(.5, .5)
-	title.Position = UDim2.new(.5, 0, .56, 0)
-	title.Size = UDim2.new(.9, 0, 0, 22)
-	title.BackgroundTransparency = 1
-	title.Text = "ACTIVATING"
-	title.TextColor3 = C.WHITE
-	title.TextSize = 13
-	title.Font = Enum.Font.GothamBold
-	title.ZIndex = 101
-	title.Parent = overlay
-
-	local sub = Instance.new("TextLabel")
-	sub.AnchorPoint = Vector2.new(.5, .5)
-	sub.Position = UDim2.new(.5, 0, .67, 0)
-	sub.Size = UDim2.new(.9, 0, 0, 18)
-	sub.BackgroundTransparency = 1
-	sub.Text = "Preparing boost..."
-	sub.TextColor3 = C.MUTED
-	sub.TextSize = 9
-	sub.Font = Enum.Font.Gotham
-	sub.ZIndex = 101
-	sub.Parent = overlay
-
-	local barBack = Instance.new("Frame")
-	barBack.AnchorPoint = Vector2.new(.5, .5)
-	barBack.Position = UDim2.new(.5, 0, .81, 0)
-	barBack.Size = UDim2.new(.62, 0, 0, 4)
-	barBack.BackgroundColor3 = Color3.fromRGB(30, 38, 54)
-	barBack.BorderSizePixel = 0
-	barBack.ZIndex = 101
-	barBack.Parent = overlay
-
-	Corner(barBack, 5)
-
-	local bar = Instance.new("Frame")
-	bar.Size = UDim2.new(0, 0, 1, 0)
-	bar.BackgroundColor3 = accent
-	bar.BorderSizePixel = 0
-	bar.ZIndex = 102
-	bar.Parent = barBack
-
-	Corner(bar, 5)
-
-	return overlay, spinner, title, sub, bar
-end
-
---========================================================--
--- CARD CREATOR
---========================================================--
-
-local function CreateCard(config)
-
-	local card = Instance.new("Frame")
-
-	card.AnchorPoint = Vector2.new(.5, .5)
-
-	card.Size = UDim2.new(
-		.88,
-		0,
-		0,
-		157
-	)
-
-	card.Position = config.Position
-
-	card.BackgroundColor3 = C.CARD
-	card.BorderSizePixel = 0
-	card.Visible = false
-	card.Parent = Gui
-
-	-- Responsive limits
-	local constraint = Instance.new("UISizeConstraint")
-	constraint.MinSize = Vector2.new(270, 145)
-	constraint.MaxSize = Vector2.new(390, 180)
-	constraint.Parent = card
-
-	Corner(card, 18)
-	Stroke(card, config.Accent, .72, 1)
-
-	--==================================================--
-	-- GLOW
-	--==================================================--
-
-	local glow = Instance.new("ImageLabel")
-	glow.AnchorPoint = Vector2.new(.5, .5)
-	glow.Position = UDim2.fromScale(.5, .5)
-	glow.Size = UDim2.new(1, 28, 1, 28)
-	glow.BackgroundTransparency = 1
-	glow.Image = "rbxassetid://5028857084"
-	glow.ImageColor3 = config.Accent
-	glow.ImageTransparency = .9
-	glow.ScaleType = Enum.ScaleType.Slice
-	glow.SliceCenter = Rect.new(24, 24, 276, 276)
-	glow.Parent = card
-
-	--==================================================--
-	-- TOP
-	--==================================================--
-
-	local top = Instance.new("Frame")
-	top.Size = UDim2.new(1, 0, 0, 54)
-	top.BackgroundColor3 = C.CARD2
-	top.BorderSizePixel = 0
-	top.Parent = card
-
-	Corner(top, 18)
-
-	local line = Instance.new("Frame")
-	line.Position = UDim2.new(0, 14, 1, -2)
-	line.Size = UDim2.new(1, -28, 0, 1)
-	line.BackgroundColor3 = config.Accent
-	line.BackgroundTransparency = .65
-	line.BorderSizePixel = 0
-	line.Parent = top
-
-	--==================================================--
-	-- ICON
-	--==================================================--
-
-	local icon = Instance.new("Frame")
-	icon.Position = UDim2.new(0, 13, 0, 11)
-	icon.Size = UDim2.new(0, 32, 0, 32)
-	icon.BackgroundColor3 = config.Accent
-	icon.BackgroundTransparency = .82
-	icon.BorderSizePixel = 0
-	icon.Parent = top
-
-	Corner(icon, 10)
-
-	local iconText = Instance.new("TextLabel")
-	iconText.Size = UDim2.fromScale(1, 1)
-	iconText.BackgroundTransparency = 1
-	iconText.Text = config.Icon
-	iconText.TextColor3 = config.Accent
-	iconText.TextSize = 16
-	iconText.Font = Enum.Font.GothamBold
-	iconText.Parent = icon
-
-	--==================================================--
-	-- TITLE
-	--==================================================--
-
-	local title = Instance.new("TextLabel")
-	title.Position = UDim2.new(0, 55, 0, 8)
-	title.Size = UDim2.new(1, -100, 0, 20)
-	title.BackgroundTransparency = 1
-	title.Text = config.Title
-	title.TextColor3 = C.WHITE
-	title.TextSize = 14
-	title.Font = Enum.Font.GothamBold
-	title.TextXAlignment = Enum.TextXAlignment.Left
-	title.Parent = top
-
-	local subtitle = Instance.new("TextLabel")
-	subtitle.Position = UDim2.new(0, 55, 0, 28)
-	subtitle.Size = UDim2.new(1, -65, 0, 14)
-	subtitle.BackgroundTransparency = 1
-	subtitle.Text = config.Subtitle
-	subtitle.TextColor3 = config.Accent
-	subtitle.TextSize = 8
-	subtitle.Font = Enum.Font.GothamBold
-	subtitle.TextXAlignment = Enum.TextXAlignment.Left
-	subtitle.Parent = top
-
-	--==================================================--
-	-- CLOSE
-	--==================================================--
-
-	local close = Instance.new("TextButton")
-	close.Position = UDim2.new(1, -39, 0, 13)
-	close.Size = UDim2.new(0, 27, 0, 27)
-	close.BackgroundColor3 = Color3.fromRGB(26, 33, 47)
-	close.Text = "×"
-	close.TextColor3 = C.MUTED
-	close.TextSize = 17
-	close.Font = Enum.Font.GothamBold
-	close.AutoButtonColor = false
-	close.Parent = top
-
-	Corner(close, 8)
-
-	close.MouseEnter:Connect(function()
-
-		Tween(close, .15, {
-			BackgroundColor3 = C.RED,
-			TextColor3 = C.WHITE
-		})
-
-	end)
-
-	close.MouseLeave:Connect(function()
-
-		Tween(close, .15, {
-			BackgroundColor3 = Color3.fromRGB(26, 33, 47),
-			TextColor3 = C.MUTED
-		})
-
-	end)
-
-	close.MouseButton1Click:Connect(function()
-
-		Tween(
-			card,
-			.3,
+--==================================================
+-- LOGO PULSE
+--==================================================
+
+task.spawn(function()
+	while gui.Parent do
+		local grow = TweenService:Create(
+			logo,
+			TweenInfo.new(
+				1.5,
+				Enum.EasingStyle.Sine,
+				Enum.EasingDirection.InOut
+			),
 			{
-				Size = UDim2.new(0, 0, 0, 0)
-			},
-			Enum.EasingStyle.Back,
-			Enum.EasingDirection.In
+				Size = UDim2.fromOffset(63, 63)
+			}
 		)
 
-		task.wait(.3)
-
-		card.Visible = false
-
-	end)
-
-	--==================================================--
-	-- STATUS
-	--==================================================--
-
-	local statusDot = Instance.new("Frame")
-	statusDot.Position = UDim2.new(0, 16, 0, 69)
-	statusDot.Size = UDim2.new(0, 7, 0, 7)
-	statusDot.BackgroundColor3 = C.MUTED
-	statusDot.BorderSizePixel = 0
-	statusDot.Parent = card
-
-	Corner(statusDot, 10)
-
-	local status = Instance.new("TextLabel")
-	status.Position = UDim2.new(0, 29, 0, 64)
-	status.Size = UDim2.new(1, -45, 0, 17)
-	status.BackgroundTransparency = 1
-	status.Text = config.OffText
-	status.TextColor3 = C.MUTED
-	status.TextSize = 9
-	status.Font = Enum.Font.GothamSemibold
-	status.TextXAlignment = Enum.TextXAlignment.Left
-	status.Parent = card
-
-	--==================================================--
-	-- BUTTON
-	--==================================================--
-
-	local button = Instance.new("TextButton")
-	button.Position = UDim2.new(0, 14, 1, -53)
-	button.Size = UDim2.new(1, -28, 0, 39)
-	button.BackgroundColor3 = config.Accent
-	button.BorderSizePixel = 0
-	button.Text = config.OffButton
-	button.TextColor3 = C.WHITE
-	button.TextSize = 11
-	button.Font = Enum.Font.GothamBold
-	button.AutoButtonColor = false
-	button.Parent = card
-
-	Corner(button, 11)
-
-	Gradient(button, {
-		ColorSequenceKeypoint.new(0, config.Accent),
-		ColorSequenceKeypoint.new(1, config.Accent2)
-	}, 0)
-
-	--==================================================--
-	-- LOADING
-	--==================================================--
-
-	local loading, spinner, loadingTitle, loadingSub, bar =
-		CreateCardLoading(card, config.Accent)
-
-	local enabled = false
-	local busy = false
-
-	--==================================================--
-	-- BUTTON HOVER
-	--==================================================--
-
-	button.MouseEnter:Connect(function()
-
-		if busy then
-			return
-		end
-
-		Tween(button, .18, {
-			Position = UDim2.new(0, 11, 1, -55),
-			Size = UDim2.new(1, -22, 0, 42)
-		}, Enum.EasingStyle.Sine)
-
-	end)
-
-	button.MouseLeave:Connect(function()
-
-		Tween(button, .18, {
-			Position = UDim2.new(0, 14, 1, -53),
-			Size = UDim2.new(1, -28, 0, 39)
-		}, Enum.EasingStyle.Sine)
-
-	end)
-
-	--==================================================--
-	-- CLICK
-	--==================================================--
-
-	button.MouseButton1Click:Connect(function()
-
-		if busy then
-			return
-		end
-
-		busy = true
-		loading.Visible = true
-		bar.Size = UDim2.new(0, 0, 1, 0)
-
-		if enabled then
-
-			loadingTitle.Text = "DEACTIVATING"
-			loadingSub.Text = config.LoadOff
-
-		else
-
-			loadingTitle.Text = "ACTIVATING"
-			loadingSub.Text = config.LoadOn
-
-		end
-
-		Tween(
-			bar,
-			.75,
+		local shrink = TweenService:Create(
+			logo,
+			TweenInfo.new(
+				1.5,
+				Enum.EasingStyle.Sine,
+				Enum.EasingDirection.InOut
+			),
 			{
-				Size = UDim2.new(1, 0, 1, 0)
-			},
-			Enum.EasingStyle.Quint
+				Size = UDim2.fromOffset(58, 58)
+			}
 		)
 
-		task.spawn(function()
+		grow:Play()
+		grow.Completed:Wait()
 
-			local start = tick()
+		shrink:Play()
+		shrink.Completed:Wait()
+	end
+end)
 
-			while loading.Visible and tick() - start < .85 do
-
-				spinner.Rotation += 25
-
-				task.wait(.05)
-
-			end
-
-			spinner.Rotation = 0
-
-		end)
-
-		task.wait(.82)
-
-		enabled = not enabled
-
-		if enabled then
-
-			status.Text = config.OnText
-			status.TextColor3 = config.Accent
-			statusDot.BackgroundColor3 = config.Accent
-
-			button.Text = config.OnButton
-
-			Tween(button, .25, {
-				BackgroundColor3 = C.GREEN
-			}, Enum.EasingStyle.Sine)
-
-			Tween(statusDot, .2, {
-				Size = UDim2.new(0, 10, 0, 10)
-			}, Enum.EasingStyle.Sine)
-
-			task.wait(.1)
-
-			Tween(statusDot, .2, {
-				Size = UDim2.new(0, 7, 0, 7)
-			}, Enum.EasingStyle.Sine)
-
-		else
-
-			status.Text = config.OffText
-			status.TextColor3 = C.MUTED
-			statusDot.BackgroundColor3 = C.MUTED
-
-			button.Text = config.OffButton
-
-			Tween(button, .25, {
-				BackgroundColor3 = config.Accent
-			}, Enum.EasingStyle.Sine)
-
-		end
-
-		loading.Visible = false
-		busy = false
-
-	end)
-
-	--==================================================--
-	-- DRAG
-	--==================================================--
-
-	MakeDraggable(top, card)
-
-	return card
-end
-
---========================================================--
--- CREATE SOFIYA CARD
---========================================================--
-
-local Sofiya = CreateCard({
-
-	Title = "SOFIYA HUB",
-
-	Subtitle = "RNG LUCK BOOST",
-
-	Icon = "✦",
-
-	Accent = C.BLUE,
-	Accent2 = C.BLUE2,
-
-	Position = UDim2.new(
-		.5,
-		0,
-		.5,
-		-92
-	),
-
-	OffText = "RNG LUCK BOOST   •   DEACTIVATED",
-
-	OnText = "RNG LUCK BOOST   •   ACTIVATED",
-
-	OffButton = "ACTIVATE RNG BOOST",
-
-	OnButton = "DEACTIVATE RNG BOOST",
-
-	LoadOn = "Initializing luck system...",
-
-	LoadOff = "Disabling luck system..."
-})
-
---========================================================--
--- CREATE 99X CARD
---========================================================--
-
-local Lucky = CreateCard({
-
-	Title = "99X LUCK",
-
-	Subtitle = "LUCKY BLOCK  •  LUCKY BOOST",
-
-	Icon = "★",
-
-	Accent = C.GOLD,
-	Accent2 = C.ORANGE,
-
-	Position = UDim2.new(
-		.5,
-		0,
-		.5,
-		90
-	),
-
-	OffText = "LUCKY BLOCK BOOST   •   OFF",
-
-	OnText = "LUCKY BLOCK BOOST   •   ACTIVE",
-
-	OffButton = "START LUCKY BOOST",
-
-	OnButton = "STOP LUCKY BOOST",
-
-	LoadOn = "Preparing lucky block boost...",
-
-	LoadOff = "Stopping lucky block boost..."
-})
-
---========================================================--
--- WAIT FOR LOADING
---========================================================--
+--==================================================
+-- LOADING SEQUENCE
+--==================================================
 
 task.spawn(function()
 
-	while PlayerGui:FindFirstChild("SofiyaLoading") do
-		task.wait(.5)
+	-- 0 -> 20 FAST
+	animateTo(20, FAST_TIME)
+
+	-- 20 -> 50 GRADUALLY SLOWER
+	animateTo(50, MID_TIME)
+
+	-- 50 -> 90 STEADY SLOW
+	animateTo(90, SLOW_TIME)
+
+	-- 90 -> 98 VERY SLOW
+	animateTo(98, FINAL_TIME)
+
+	--==================================================
+	-- PERMANENT 98%
+	--==================================================
+
+	percent.Text = "98%"
+	status.Text = "98% • Final luck optimization..."
+
+	-- Intentionally stays here forever.
+	-- No fade.
+	-- No 100%.
+	-- No destroy.
+	-- No additional loading.
+	while gui.Parent do
+		task.wait(5)
 	end
-
-	--==================================================--
-	-- SOFIYA OPEN
-	--==================================================--
-
-	Sofiya.Visible = true
-
-	local SofiyaFinalSize = Sofiya.Size
-
-	Sofiya.Size = UDim2.new(
-		0,
-		0,
-		0,
-		0
-	)
-
-	Tween(
-		Sofiya,
-		.55,
-		{
-			Size = SofiyaFinalSize
-		},
-		Enum.EasingStyle.Back,
-		Enum.EasingDirection.Out
-	)
-
-	task.wait(.18)
-
-	--==================================================--
-	-- LUCKY OPEN
-	--==================================================--
-
-	Lucky.Visible = true
-
-	local LuckyFinalSize = Lucky.Size
-
-	Lucky.Size = UDim2.new(
-		0,
-		0,
-		0,
-		0
-	)
-
-	Tween(
-		Lucky,
-		.55,
-		{
-			Size = LuckyFinalSize
-		},
-		Enum.EasingStyle.Back,
-		Enum.EasingDirection.Out
-	)
-
 end)
-
---========================================================--
--- FINAL
---========================================================--
-
-print("SOFIYA HUB | Mobile Optimized")
-print("SOFIYA HUB | Smooth UI Enabled")
-print("SOFIYA HUB | Neural Loading Enabled")
-print("SOFIYA HUB | 99% Hold: 4 Hours")
