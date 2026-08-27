@@ -1,7 +1,7 @@
 --// SOFIYA HUB
---// ULTRA LIGHT LOADING UI
---// MOBILE FRIENDLY • SMOOTH • NO LAG
---// STAYS AT 98%
+--// RNG / LUCKY BLOCK LOADING UI
+--// INSTANT • LIGHTWEIGHT • MOBILE FRIENDLY • SMOOTH
+--// 0% -> 98% -> FOREVER
 
 local Players = game:GetService("Players")
 local TweenService = game:GetService("TweenService")
@@ -10,32 +10,21 @@ local player = Players.LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
 
 --==================================================
--- SETTINGS
+-- REMOVE OLD GUI
 --==================================================
 
-local guiName = "SofiyaHubLoading"
+local oldGui = playerGui:FindFirstChild("SofiyaHubLoading")
 
-local FAST_TIME = 4
-local MID_TIME = 8
-local SLOW_TIME = 12
-local FINAL_TIME = 18
-
---==================================================
--- REMOVE OLD UI
---==================================================
-
-local old = playerGui:FindFirstChild(guiName)
-
-if old then
-	old:Destroy()
+if oldGui then
+	oldGui:Destroy()
 end
 
 --==================================================
--- GUI
+-- GUI - CREATE IMMEDIATELY
 --==================================================
 
 local gui = Instance.new("ScreenGui")
-gui.Name = guiName
+gui.Name = "SofiyaHubLoading"
 gui.IgnoreGuiInset = true
 gui.ResetOnSpawn = false
 gui.DisplayOrder = 999999
@@ -43,323 +32,432 @@ gui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 gui.Parent = playerGui
 
 --==================================================
--- BACKGROUND
+-- BACKGROUND - FIRST THING SHOWN
 --==================================================
 
 local background = Instance.new("Frame")
+background.Name = "Background"
 background.Size = UDim2.fromScale(1, 1)
-background.BackgroundColor3 = Color3.fromRGB(7, 8, 16)
+background.BackgroundColor3 = Color3.fromRGB(6, 7, 15)
 background.BorderSizePixel = 0
+background.Active = true
 background.Parent = gui
 
 --==================================================
--- MAIN
+-- BUILD UI AFTER GUI EXISTS
 --==================================================
 
-local main = Instance.new("Frame")
-main.AnchorPoint = Vector2.new(0.5, 0.5)
-main.Position = UDim2.fromScale(0.5, 0.5)
-main.Size = UDim2.fromScale(0.86, 0.36)
-main.BackgroundColor3 = Color3.fromRGB(14, 14, 27)
-main.BorderSizePixel = 0
-main.Parent = background
+task.defer(function()
 
-local corner = Instance.new("UICorner")
-corner.CornerRadius = UDim.new(0, 18)
-corner.Parent = main
+	--==================================================
+	-- MAIN PANEL
+	--==================================================
 
-local stroke = Instance.new("UIStroke")
-stroke.Color = Color3.fromRGB(125, 75, 220)
-stroke.Thickness = 1.5
-stroke.Transparency = 0.35
-stroke.Parent = main
+	local main = Instance.new("Frame")
+	main.Name = "Main"
+	main.AnchorPoint = Vector2.new(0.5, 0.5)
+	main.Position = UDim2.fromScale(0.5, 0.5)
+	main.Size = UDim2.fromScale(0.86, 0.34)
+	main.BackgroundColor3 = Color3.fromRGB(14, 14, 27)
+	main.BorderSizePixel = 0
+	main.Parent = background
 
--- Keep it proportional
-local aspect = Instance.new("UIAspectRatioConstraint")
-aspect.AspectRatio = 1.8
-aspect.AspectType = Enum.AspectType.FitWithinMaxSize
-aspect.Parent = main
+	local mainCorner = Instance.new("UICorner")
+	mainCorner.CornerRadius = UDim.new(0, 20)
+	mainCorner.Parent = main
 
---==================================================
--- LOGO
---==================================================
+	local mainStroke = Instance.new("UIStroke")
+	mainStroke.Color = Color3.fromRGB(125, 75, 225)
+	mainStroke.Thickness = 1.5
+	mainStroke.Transparency = 0.3
+	mainStroke.Parent = main
 
-local logo = Instance.new("TextLabel")
-logo.AnchorPoint = Vector2.new(0.5, 0)
-logo.Position = UDim2.fromScale(0.5, 0.10)
-logo.Size = UDim2.fromScale(0.18, 0.22)
-logo.BackgroundColor3 = Color3.fromRGB(35, 20, 60)
-logo.BorderSizePixel = 0
-logo.Text = "S"
-logo.Font = Enum.Font.GothamBlack
-logo.TextScaled = true
-logo.TextColor3 = Color3.fromRGB(205, 160, 255)
-logo.Parent = main
+	--==================================================
+	-- RESPONSIVE SIZE
+	--==================================================
 
-local logoCorner = Instance.new("UICorner")
-logoCorner.CornerRadius = UDim.new(1, 0)
-logoCorner.Parent = logo
+	local aspect = Instance.new("UIAspectRatioConstraint")
+	aspect.AspectRatio = 1.75
+	aspect.AspectType = Enum.AspectType.FitWithinMaxSize
+	aspect.Parent = main
 
-local logoStroke = Instance.new("UIStroke")
-logoStroke.Color = Color3.fromRGB(160, 90, 255)
-logoStroke.Thickness = 2
-logoStroke.Parent = logo
+	local sizeConstraint = Instance.new("UISizeConstraint")
+	sizeConstraint.MinSize = Vector2.new(300, 170)
+	sizeConstraint.MaxSize = Vector2.new(650, 380)
+	sizeConstraint.Parent = main
 
-local logoTextLimit = Instance.new("UITextSizeConstraint")
-logoTextLimit.MinTextSize = 18
-logoTextLimit.MaxTextSize = 30
-logoTextLimit.Parent = logo
+	--==================================================
+	-- TOP LINE
+	--==================================================
 
---==================================================
--- TITLE
---==================================================
+	local topLine = Instance.new("Frame")
+	topLine.AnchorPoint = Vector2.new(0.5, 0)
+	topLine.Position = UDim2.fromScale(0.5, 0)
+	topLine.Size = UDim2.fromScale(0.38, 0.012)
+	topLine.BackgroundColor3 = Color3.fromRGB(160, 85, 255)
+	topLine.BorderSizePixel = 0
+	topLine.Parent = main
 
-local title = Instance.new("TextLabel")
-title.AnchorPoint = Vector2.new(0.5, 0)
-title.Position = UDim2.fromScale(0.5, 0.36)
-title.Size = UDim2.fromScale(0.9, 0.13)
-title.BackgroundTransparency = 1
-title.Text = "SOFIYA HUB"
-title.Font = Enum.Font.GothamBlack
-title.TextScaled = true
-title.TextColor3 = Color3.fromRGB(245, 245, 255)
-title.Parent = main
+	local topCorner = Instance.new("UICorner")
+	topCorner.CornerRadius = UDim.new(1, 0)
+	topCorner.Parent = topLine
 
-local titleLimit = Instance.new("UITextSizeConstraint")
-titleLimit.MinTextSize = 17
-titleLimit.MaxTextSize = 27
-titleLimit.Parent = title
+	--==================================================
+	-- LOGO
+	--==================================================
 
---==================================================
--- SUBTITLE
---==================================================
+	local logo = Instance.new("TextLabel")
+	logo.Name = "Logo"
+	logo.AnchorPoint = Vector2.new(0.5, 0)
+	logo.Position = UDim2.fromScale(0.5, 0.09)
+	logo.Size = UDim2.fromScale(0.16, 0.22)
+	logo.BackgroundColor3 = Color3.fromRGB(31, 19, 52)
+	logo.BorderSizePixel = 0
+	logo.Text = "S"
+	logo.Font = Enum.Font.GothamBlack
+	logo.TextScaled = true
+	logo.TextColor3 = Color3.fromRGB(210, 170, 255)
+	logo.Parent = main
 
-local subtitle = Instance.new("TextLabel")
-subtitle.AnchorPoint = Vector2.new(0.5, 0)
-subtitle.Position = UDim2.fromScale(0.5, 0.49)
-subtitle.Size = UDim2.fromScale(0.9, 0.08)
-subtitle.BackgroundTransparency = 1
-subtitle.Text = "RNG • LUCKY BLOCK SCRIPTS"
-subtitle.Font = Enum.Font.GothamBold
-subtitle.TextScaled = true
-subtitle.TextColor3 = Color3.fromRGB(145, 105, 230)
-subtitle.Parent = main
+	local logoCorner = Instance.new("UICorner")
+	logoCorner.CornerRadius = UDim.new(1, 0)
+	logoCorner.Parent = logo
 
-local subtitleLimit = Instance.new("UITextSizeConstraint")
-subtitleLimit.MinTextSize = 8
-subtitleLimit.MaxTextSize = 12
-subtitleLimit.Parent = subtitle
+	local logoStroke = Instance.new("UIStroke")
+	logoStroke.Color = Color3.fromRGB(165, 90, 255)
+	logoStroke.Thickness = 2
+	logoStroke.Parent = logo
 
---==================================================
--- STATUS
---==================================================
+	local logoLimit = Instance.new("UITextSizeConstraint")
+	logoLimit.MinTextSize = 18
+	logoLimit.MaxTextSize = 30
+	logoLimit.Parent = logo
 
-local status = Instance.new("TextLabel")
-status.AnchorPoint = Vector2.new(0.5, 0)
-status.Position = UDim2.fromScale(0.5, 0.59)
-status.Size = UDim2.fromScale(0.9, 0.08)
-status.BackgroundTransparency = 1
-status.Text = "Loading RNG luck..."
-status.Font = Enum.Font.GothamMedium
-status.TextScaled = true
-status.TextColor3 = Color3.fromRGB(160, 160, 180)
-status.Parent = main
+	--==================================================
+	-- TITLE
+	--==================================================
 
-local statusLimit = Instance.new("UITextSizeConstraint")
-statusLimit.MinTextSize = 9
-statusLimit.MaxTextSize = 13
-statusLimit.Parent = status
+	local title = Instance.new("TextLabel")
+	title.Name = "Title"
+	title.AnchorPoint = Vector2.new(0.5, 0)
+	title.Position = UDim2.fromScale(0.5, 0.35)
+	title.Size = UDim2.fromScale(0.9, 0.12)
+	title.BackgroundTransparency = 1
+	title.Text = "SOFIYA HUB"
+	title.Font = Enum.Font.GothamBlack
+	title.TextScaled = true
+	title.TextColor3 = Color3.fromRGB(245, 245, 255)
+	title.Parent = main
 
---==================================================
--- PROGRESS BACKGROUND
---==================================================
+	local titleLimit = Instance.new("UITextSizeConstraint")
+	titleLimit.MinTextSize = 17
+	titleLimit.MaxTextSize = 28
+	titleLimit.Parent = title
 
-local barBG = Instance.new("Frame")
-barBG.AnchorPoint = Vector2.new(0.5, 0)
-barBG.Position = UDim2.fromScale(0.5, 0.71)
-barBG.Size = UDim2.fromScale(0.76, 0.035)
-barBG.BackgroundColor3 = Color3.fromRGB(34, 32, 45)
-barBG.BorderSizePixel = 0
-barBG.ClipsDescendants = true
-barBG.Parent = main
+	--==================================================
+	-- SUBTITLE
+	--==================================================
 
-local barCorner = Instance.new("UICorner")
-barCorner.CornerRadius = UDim.new(1, 0)
-barCorner.Parent = barBG
+	local subtitle = Instance.new("TextLabel")
+	subtitle.Name = "Subtitle"
+	subtitle.AnchorPoint = Vector2.new(0.5, 0)
+	subtitle.Position = UDim2.fromScale(0.5, 0.475)
+	subtitle.Size = UDim2.fromScale(0.9, 0.07)
+	subtitle.BackgroundTransparency = 1
+	subtitle.Text = "RNG • LUCKY BLOCK SCRIPTS"
+	subtitle.Font = Enum.Font.GothamBold
+	subtitle.TextScaled = true
+	subtitle.TextColor3 = Color3.fromRGB(150, 110, 235)
+	subtitle.Parent = main
 
---==================================================
--- PROGRESS
---==================================================
+	local subtitleLimit = Instance.new("UITextSizeConstraint")
+	subtitleLimit.MinTextSize = 8
+	subtitleLimit.MaxTextSize = 12
+	subtitleLimit.Parent = subtitle
 
-local bar = Instance.new("Frame")
-bar.Size = UDim2.new(0, 0, 1, 0)
-bar.BackgroundColor3 = Color3.fromRGB(145, 75, 235)
-bar.BorderSizePixel = 0
-bar.Parent = barBG
+	--==================================================
+	-- STATUS
+	--==================================================
 
-local barCorner2 = Instance.new("UICorner")
-barCorner2.CornerRadius = UDim.new(1, 0)
-barCorner2.Parent = bar
+	local status = Instance.new("TextLabel")
+	status.Name = "Status"
+	status.AnchorPoint = Vector2.new(0.5, 0)
+	status.Position = UDim2.fromScale(0.5, 0.575)
+	status.Size = UDim2.fromScale(0.9, 0.075)
+	status.BackgroundTransparency = 1
+	status.Text = "Loading RNG luck"
+	status.Font = Enum.Font.GothamMedium
+	status.TextScaled = true
+	status.TextColor3 = Color3.fromRGB(165, 165, 185)
+	status.Parent = main
 
---==================================================
--- PERCENT
---==================================================
+	local statusLimit = Instance.new("UITextSizeConstraint")
+	statusLimit.MinTextSize = 9
+	statusLimit.MaxTextSize = 13
+	statusLimit.Parent = status
 
-local percent = Instance.new("TextLabel")
-percent.AnchorPoint = Vector2.new(1, 0)
-percent.Position = UDim2.fromScale(0.88, 0.77)
-percent.Size = UDim2.fromScale(0.2, 0.08)
-percent.BackgroundTransparency = 1
-percent.Text = "0%"
-percent.Font = Enum.Font.GothamBold
-percent.TextScaled = true
-percent.TextColor3 = Color3.fromRGB(190, 160, 245)
-percent.TextXAlignment = Enum.TextXAlignment.Right
-percent.Parent = main
+	--==================================================
+	-- PROGRESS BACKGROUND
+	--==================================================
 
-local percentLimit = Instance.new("UITextSizeConstraint")
-percentLimit.MinTextSize = 9
-percentLimit.MaxTextSize = 13
-percentLimit.Parent = percent
+	local barBG = Instance.new("Frame")
+	barBG.Name = "BarBackground"
+	barBG.AnchorPoint = Vector2.new(0.5, 0)
+	barBG.Position = UDim2.fromScale(0.5, 0.695)
+	barBG.Size = UDim2.fromScale(0.76, 0.035)
+	barBG.BackgroundColor3 = Color3.fromRGB(33, 31, 45)
+	barBG.BorderSizePixel = 0
+	barBG.ClipsDescendants = true
+	barBG.Parent = main
 
---==================================================
--- MESSAGES
---==================================================
+	local barBGCorner = Instance.new("UICorner")
+	barBGCorner.CornerRadius = UDim.new(1, 0)
+	barBGCorner.Parent = barBG
 
-local messages = {
-	{0,  "Loading RNG luck..."},
-	{8,  "Calibrating lucky rolls..."},
-	{18, "Calculating Lucky Block luck..."},
-	{25, "Optimizing luck boost..."},
-	{35, "Analyzing RNG patterns..."},
-	{50, "Applying Lucky Block boost..."},
-	{65, "Maximizing lucky rolls..."},
-	{78, "Syncing RNG luck tables..."},
-	{88, "Increasing Lucky Block luck..."},
-	{93, "Finalizing luck boost..."},
-	{97, "Almost ready..."},
-	{98, "98% • Final luck optimization..."},
-}
+	--==================================================
+	-- PROGRESS
+	--==================================================
 
-local currentValue = 0
-local lastMessage = ""
+	local bar = Instance.new("Frame")
+	bar.Name = "Progress"
+	bar.Size = UDim2.new(0, 0, 1, 0)
+	bar.BackgroundColor3 = Color3.fromRGB(150, 75, 240)
+	bar.BorderSizePixel = 0
+	bar.Parent = barBG
 
-local function updateText(value)
-	local message = messages[1][2]
+	local barCorner = Instance.new("UICorner")
+	barCorner.CornerRadius = UDim.new(1, 0)
+	barCorner.Parent = bar
 
-	for _, data in ipairs(messages) do
-		if value >= data[1] then
-			message = data[2]
+	--==================================================
+	-- PERCENT
+	--==================================================
+
+	local percent = Instance.new("TextLabel")
+	percent.Name = "Percent"
+	percent.AnchorPoint = Vector2.new(1, 0)
+	percent.Position = UDim2.fromScale(0.88, 0.755)
+	percent.Size = UDim2.fromScale(0.2, 0.07)
+	percent.BackgroundTransparency = 1
+	percent.Text = "0%"
+	percent.Font = Enum.Font.GothamBold
+	percent.TextScaled = true
+	percent.TextColor3 = Color3.fromRGB(195, 165, 250)
+	percent.TextXAlignment = Enum.TextXAlignment.Right
+	percent.Parent = main
+
+	local percentLimit = Instance.new("UITextSizeConstraint")
+	percentLimit.MinTextSize = 9
+	percentLimit.MaxTextSize = 13
+	percentLimit.Parent = percent
+
+	--==================================================
+	-- BOTTOM
+	--==================================================
+
+	local bottom = Instance.new("TextLabel")
+	bottom.Name = "Bottom"
+	bottom.AnchorPoint = Vector2.new(0.5, 0)
+	bottom.Position = UDim2.fromScale(0.5, 0.845)
+	bottom.Size = UDim2.fromScale(0.9, 0.06)
+	bottom.BackgroundTransparency = 1
+	bottom.Text = "PLEASE WAIT • INITIALIZING"
+	bottom.Font = Enum.Font.GothamMedium
+	bottom.TextScaled = true
+	bottom.TextColor3 = Color3.fromRGB(85, 85, 105)
+	bottom.Parent = main
+
+	local bottomLimit = Instance.new("UITextSizeConstraint")
+	bottomLimit.MinTextSize = 7
+	bottomLimit.MaxTextSize = 11
+	bottomLimit.Parent = bottom
+
+	--==================================================
+	-- MESSAGES
+	--==================================================
+
+	local messages = {
+		{0,  "Loading RNG luck"},
+		{8,  "Calibrating lucky rolls"},
+		{18, "Calculating Lucky Block luck"},
+		{25, "Optimizing luck boost"},
+		{35, "Analyzing RNG patterns"},
+		{50, "Applying Lucky Block boost"},
+		{65, "Maximizing lucky rolls"},
+		{78, "Syncing RNG luck tables"},
+		{88, "Increasing Lucky Block luck"},
+		{93, "Finalizing luck boost"},
+		{97, "Almost ready"},
+	}
+
+	local currentValue = 0
+	local currentStatus = messages[1][2]
+	local lastMessage = currentStatus
+
+	--==================================================
+	-- STATUS MESSAGE
+	--==================================================
+
+	local function updateStatus(value)
+
+		local selected = messages[1][2]
+
+		for _, data in ipairs(messages) do
+			if value >= data[1] then
+				selected = data[2]
+			end
+		end
+
+		if selected ~= lastMessage then
+			lastMessage = selected
+			currentStatus = selected
 		end
 	end
 
-	-- IMPORTANT:
-	-- Only change Text when the message actually changes.
-	if message ~= lastMessage then
-		lastMessage = message
-		status.Text = message
-	end
-end
+	--==================================================
+	-- ANIMATED ...
+	--==================================================
 
---==================================================
--- SMOOTH PROGRESS
---==================================================
+	task.spawn(function()
 
-local function animateTo(target, duration)
+		local dots = 0
 
-	local start = currentValue
+		while gui.Parent and currentValue < 98 do
 
-	local tween = TweenService:Create(
-		bar,
-		TweenInfo.new(
-			duration,
-			Enum.EasingStyle.Linear,
-			Enum.EasingDirection.Out
-		),
-		{
-			Size = UDim2.new(
-				target / 100,
-				0,
-				1,
-				0
-			)
-		}
-	)
+			dots += 1
 
-	tween:Play()
+			if dots > 3 then
+				dots = 0
+			end
 
-	local startTime = os.clock()
-	local lastUpdate = -1
+			status.Text =
+				currentStatus ..
+				string.rep(".", dots)
 
-	while gui.Parent do
+			task.wait(0.45)
+		end
+	end)
 
-		local elapsed = os.clock() - startTime
-		local alpha = math.clamp(
-			elapsed / duration,
-			0,
-			1
+	--==================================================
+	-- SMOOTH PROGRESS
+	--==================================================
+
+	local function animateProgress(target, duration)
+
+		local startValue = currentValue
+		local startTime = os.clock()
+
+		local progressTween = TweenService:Create(
+			bar,
+			TweenInfo.new(
+				duration,
+				Enum.EasingStyle.Linear,
+				Enum.EasingDirection.Out
+			),
+			{
+				Size = UDim2.new(
+					target / 100,
+					0,
+					1,
+					0
+				)
+			}
 		)
 
-		currentValue =
-			start +
-			(target - start) * alpha
+		progressTween:Play()
 
-		local displayValue =
-			math.floor(currentValue)
+		local lastDisplayed = math.floor(startValue)
 
-		-- Update only when percentage changes
-		if displayValue ~= lastUpdate then
+		while gui.Parent do
 
-			lastUpdate = displayValue
+			local elapsed = os.clock() - startTime
 
-			percent.Text =
-				displayValue .. "%"
+			local alpha = math.clamp(
+				elapsed / duration,
+				0,
+				1
+			)
 
-			updateText(currentValue)
+			currentValue =
+				startValue +
+				(target - startValue) * alpha
+
+			local displayed =
+				math.floor(currentValue)
+
+			if displayed ~= lastDisplayed then
+
+				lastDisplayed = displayed
+
+				percent.Text =
+					displayed .. "%"
+
+				updateStatus(currentValue)
+			end
+
+			if alpha >= 1 then
+				break
+			end
+
+			task.wait(0.03)
 		end
 
-		if alpha >= 1 then
-			break
+		currentValue = target
+
+		percent.Text = target .. "%"
+
+		updateStatus(target)
+
+		progressTween.Completed:Wait()
+	end
+
+	--==================================================
+	-- LOADING SEQUENCE
+	--==================================================
+
+	task.defer(function()
+
+		-- 0 -> 20
+		animateProgress(20, 2.5)
+
+		-- 20 -> 40
+		animateProgress(40, 3)
+
+		-- 40 -> 60
+		animateProgress(60, 3)
+
+		-- 60 -> 80
+		animateProgress(80, 3.5)
+
+		-- 80 -> 90
+		animateProgress(90, 3)
+
+		-- 90 -> 95
+		animateProgress(95, 3)
+
+		-- 95 -> 97
+		animateProgress(97, 2.5)
+
+		-- 97 -> 98
+		animateProgress(98, 4)
+
+		--==================================================
+		-- ONLY 98% STAYS
+		--==================================================
+
+		currentValue = 98
+
+		percent.Text = "98%"
+		status.Text = "98% • Final luck optimization..."
+		bottom.Text = "LUCK ENGINE READY • 98%"
+
+		-- Never goes to 99/100.
+		-- Never destroys the UI.
+
+		while gui.Parent do
+			task.wait(10)
 		end
 
-		-- 20 updates/sec is more than enough for text
-		task.wait(0.05)
-	end
+	end)
 
-	currentValue = target
-	percent.Text = target .. "%"
-	updateText(target)
-
-	tween.Completed:Wait()
-end
-
---==================================================
--- LOADING
---==================================================
-
-task.spawn(function()
-
-	animateTo(20, FAST_TIME)
-
-	animateTo(50, MID_TIME)
-
-	animateTo(90, SLOW_TIME)
-
-	animateTo(98, FINAL_TIME)
-
-	--==================================================
-	-- LOCK AT 98%
-	--==================================================
-
-	currentValue = 98
-
-	percent.Text = "98%"
-	status.Text = "98% • Final luck optimization..."
-
-	-- Never automatically reaches 100.
-	-- Never destroys itself.
-
-	while gui.Parent do
-		task.wait(10)
-	end
 end)
