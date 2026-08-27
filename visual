@@ -1,9 +1,11 @@
---// SOFIYA HUB SCRIPTS
+--// SOFIYA HUB
 --// RNG / LUCKY BLOCK LOADING UI
---// Lightweight + Smooth + Permanent 98%
+--// MOBILE-FIRST • RESPONSIVE • SMOOTH • 98% LOCK
+--// Optimized for Phone / Tablet / PC
 
 local Players = game:GetService("Players")
 local TweenService = game:GetService("TweenService")
+local RunService = game:GetService("RunService")
 
 local player = Players.LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
@@ -12,262 +14,577 @@ local playerGui = player:WaitForChild("PlayerGui")
 -- SETTINGS
 --==================================================
 
-local FAST_TIME = 8
-local MID_TIME = 20
-local SLOW_TIME = 45
-local FINAL_TIME = 60
+local FAST_TIME = 6
+local MID_TIME = 14
+local SLOW_TIME = 24
+local FINAL_TIME = 35
+
+local TARGET_PERCENT = 98
+
+--==================================================
+-- CLEAN OLD GUI
+--==================================================
+
+local oldGui = playerGui:FindFirstChild("SofiyaHubLoading")
+
+if oldGui then
+	oldGui:Destroy()
+end
+
+--==================================================
+-- HELPERS
+--==================================================
+
+local function new(className, properties, parent)
+	local object = Instance.new(className)
+
+	for property, value in pairs(properties) do
+		object[property] = value
+	end
+
+	object.Parent = parent
+
+	return object
+end
+
+local function tween(object, duration, properties, style, direction)
+	local info = TweenInfo.new(
+		duration,
+		style or Enum.EasingStyle.Quart,
+		direction or Enum.EasingDirection.Out
+	)
+
+	local t = TweenService:Create(object, info, properties)
+	t:Play()
+
+	return t
+end
 
 --==================================================
 -- GUI
 --==================================================
 
-local gui = Instance.new("ScreenGui")
-gui.Name = "SofiyaHubLoading"
-gui.IgnoreGuiInset = true
-gui.ResetOnSpawn = false
-gui.DisplayOrder = 999
-gui.Parent = playerGui
-
--- Background
-local background = Instance.new("Frame")
-background.Size = UDim2.fromScale(1, 1)
-background.BackgroundColor3 = Color3.fromRGB(5, 6, 14)
-background.BorderSizePixel = 0
-background.Parent = gui
-
-local bgGradient = Instance.new("UIGradient")
-bgGradient.Color = ColorSequence.new({
-	ColorSequenceKeypoint.new(0, Color3.fromRGB(7, 8, 18)),
-	ColorSequenceKeypoint.new(0.5, Color3.fromRGB(19, 7, 35)),
-	ColorSequenceKeypoint.new(1, Color3.fromRGB(5, 12, 25))
-})
-bgGradient.Rotation = 35
-bgGradient.Parent = background
+local gui = new("ScreenGui", {
+	Name = "SofiyaHubLoading",
+	IgnoreGuiInset = true,
+	ResetOnSpawn = false,
+	DisplayOrder = 999999,
+	ZIndexBehavior = Enum.ZIndexBehavior.Sibling,
+}, playerGui)
 
 --==================================================
--- LIGHTWEIGHT PARTICLES
+-- BACKGROUND
 --==================================================
 
-local particleFolder = Instance.new("Folder")
-particleFolder.Name = "Particles"
-particleFolder.Parent = background
+local background = new("Frame", {
+	Name = "Background",
+	Size = UDim2.fromScale(1, 1),
+	BackgroundColor3 = Color3.fromRGB(4, 5, 12),
+	BorderSizePixel = 0,
+}, gui)
 
-for i = 1, 14 do
-	local p = Instance.new("Frame")
-	p.Name = "Particle"
-	p.Size = UDim2.fromOffset(math.random(2, 4), math.random(2, 4))
-	p.Position = UDim2.fromScale(
-		math.random(5, 95) / 100,
-		math.random(5, 95) / 100
-	)
-	p.BackgroundColor3 =
-		(i % 2 == 0)
-		and Color3.fromRGB(150, 80, 255)
-		or Color3.fromRGB(70, 170, 255)
+local bgGradient = new("UIGradient", {
+	Color = ColorSequence.new({
+		ColorSequenceKeypoint.new(0, Color3.fromRGB(4, 6, 16)),
+		ColorSequenceKeypoint.new(0.35, Color3.fromRGB(17, 7, 32)),
+		ColorSequenceKeypoint.new(0.7, Color3.fromRGB(8, 12, 30)),
+		ColorSequenceKeypoint.new(1, Color3.fromRGB(3, 5, 13)),
+	}),
+	Rotation = 135,
+}, background)
 
-	p.BackgroundTransparency = math.random(45, 75) / 100
-	p.BorderSizePixel = 0
-	p.Parent = particleFolder
+--==================================================
+-- BACKGROUND GLOW
+--==================================================
 
-	local corner = Instance.new("UICorner")
-	corner.CornerRadius = UDim.new(1, 0)
-	corner.Parent = p
+local glow1 = new("Frame", {
+	Name = "Glow1",
+	AnchorPoint = Vector2.new(0.5, 0.5),
+	Position = UDim2.fromScale(0.18, 0.25),
+	Size = UDim2.fromScale(0.55, 0.55),
+	BackgroundColor3 = Color3.fromRGB(100, 35, 255),
+	BackgroundTransparency = 0.91,
+	BorderSizePixel = 0,
+}, background)
 
-	-- Each particle animates only occasionally
+new("UICorner", {
+	CornerRadius = UDim.new(1, 0),
+}, glow1)
+
+local glow1Blur = new("UIGradient", {
+	Color = ColorSequence.new({
+		ColorSequenceKeypoint.new(0, Color3.fromRGB(110, 50, 255)),
+		ColorSequenceKeypoint.new(1, Color3.fromRGB(20, 10, 50)),
+	}),
+	Transparency = NumberSequence.new({
+		NumberSequenceKeypoint.new(0, 0.1),
+		NumberSequenceKeypoint.new(1, 1),
+	}),
+}, glow1)
+
+local glow2 = new("Frame", {
+	Name = "Glow2",
+	AnchorPoint = Vector2.new(0.5, 0.5),
+	Position = UDim2.fromScale(0.84, 0.78),
+	Size = UDim2.fromScale(0.48, 0.48),
+	BackgroundColor3 = Color3.fromRGB(30, 120, 255),
+	BackgroundTransparency = 0.93,
+	BorderSizePixel = 0,
+}, background)
+
+new("UICorner", {
+	CornerRadius = UDim.new(1, 0),
+}, glow2)
+
+-- Subtle glow movement
+task.spawn(function()
+	while gui.Parent do
+		tween(
+			glow1,
+			5,
+			{
+				Position = UDim2.fromScale(0.25, 0.31),
+				BackgroundTransparency = 0.94,
+			},
+			Enum.EasingStyle.Sine,
+			Enum.EasingDirection.InOut
+		):Wait()
+
+		tween(
+			glow1,
+			5,
+			{
+				Position = UDim2.fromScale(0.18, 0.25),
+				BackgroundTransparency = 0.91,
+			},
+			Enum.EasingStyle.Sine,
+			Enum.EasingDirection.InOut
+		):Wait()
+	end
+end)
+
+--==================================================
+-- PARTICLES
+--==================================================
+
+local particleFolder = new("Folder", {
+	Name = "Particles",
+}, background)
+
+local particleColors = {
+	Color3.fromRGB(145, 80, 255),
+	Color3.fromRGB(70, 145, 255),
+	Color3.fromRGB(210, 100, 255),
+	Color3.fromRGB(90, 210, 255),
+}
+
+for i = 1, 18 do
+	local size = math.random(2, 4)
+
+	local particle = new("Frame", {
+		Name = "Particle",
+		Size = UDim2.fromOffset(size, size),
+		Position = UDim2.fromScale(
+			math.random(3, 97) / 100,
+			math.random(3, 97) / 100
+		),
+		BackgroundColor3 = particleColors[(i % #particleColors) + 1],
+		BackgroundTransparency = math.random(55, 82) / 100,
+		BorderSizePixel = 0,
+		ZIndex = 1,
+	}, particleFolder)
+
+	new("UICorner", {
+		CornerRadius = UDim.new(1, 0),
+	}, particle)
+
 	task.spawn(function()
 		while gui.Parent do
 			local target = UDim2.fromScale(
-				math.random(5, 95) / 100,
-				math.random(5, 95) / 100
+				math.random(3, 97) / 100,
+				math.random(3, 97) / 100
 			)
 
-			local tween = TweenService:Create(
-				p,
-				TweenInfo.new(
-					math.random(4, 7),
-					Enum.EasingStyle.Sine,
-					Enum.EasingDirection.InOut
-				),
+			local duration = math.random(6, 11)
+
+			tween(
+				particle,
+				duration,
 				{
 					Position = target,
-					BackgroundTransparency = math.random(50, 82) / 100
-				}
-			)
-
-			tween:Play()
-			tween.Completed:Wait()
+					BackgroundTransparency = math.random(58, 86) / 100,
+				},
+				Enum.EasingStyle.Sine,
+				Enum.EasingDirection.InOut
+			):Wait()
 		end
 	end)
 end
 
 --==================================================
+-- RESPONSIVE CONTAINER
+--==================================================
+
+local container = new("Frame", {
+	Name = "Container",
+	AnchorPoint = Vector2.new(0.5, 0.5),
+	Position = UDim2.fromScale(0.5, 0.5),
+	Size = UDim2.fromScale(0.88, 0.55),
+	BackgroundTransparency = 1,
+}, background)
+
+local aspect = new("UIAspectRatioConstraint", {
+	AspectRatio = 1.75,
+	AspectType = Enum.AspectType.FitWithinMaxSize,
+	DominantAxis = Enum.DominantAxis.Width,
+}, container)
+
+--==================================================
 -- MAIN PANEL
 --==================================================
 
-local main = Instance.new("Frame")
-main.AnchorPoint = Vector2.new(0.5, 0.5)
-main.Position = UDim2.fromScale(0.5, 0.5)
-main.Size = UDim2.fromScale(0.43, 0.29)
-main.BackgroundColor3 = Color3.fromRGB(12, 12, 23)
-main.BackgroundTransparency = 0.05
-main.BorderSizePixel = 0
-main.Parent = background
+local main = new("Frame", {
+	Name = "Main",
+	AnchorPoint = Vector2.new(0.5, 0.5),
+	Position = UDim2.fromScale(0.5, 0.5),
+	Size = UDim2.fromScale(1, 1),
+	BackgroundColor3 = Color3.fromRGB(11, 11, 23),
+	BackgroundTransparency = 0.06,
+	BorderSizePixel = 0,
+	ZIndex = 5,
+}, container)
 
-local mainCorner = Instance.new("UICorner")
-mainCorner.CornerRadius = UDim.new(0, 22)
-mainCorner.Parent = main
+new("UICorner", {
+	CornerRadius = UDim.new(0, 24),
+}, main)
 
-local mainStroke = Instance.new("UIStroke")
-mainStroke.Color = Color3.fromRGB(135, 75, 255)
-mainStroke.Thickness = 1.5
-mainStroke.Transparency = 0.3
-mainStroke.Parent = main
+local mainStroke = new("UIStroke", {
+	Color = Color3.fromRGB(133, 74, 255),
+	Thickness = 1.4,
+	Transparency = 0.25,
+}, main)
+
+-- Inner subtle border
+local inner = new("Frame", {
+	Name = "Inner",
+	AnchorPoint = Vector2.new(0.5, 0.5),
+	Position = UDim2.fromScale(0.5, 0.5),
+	Size = UDim2.new(1, -2, 1, -2),
+	BackgroundTransparency = 1,
+	BorderSizePixel = 0,
+	ZIndex = 6,
+}, main)
+
+new("UICorner", {
+	CornerRadius = UDim.new(0, 23),
+}, inner)
+
+new("UIStroke", {
+	Color = Color3.fromRGB(255, 255, 255),
+	Thickness = 1,
+	Transparency = 0.94,
+}, inner)
 
 --==================================================
--- TOP NEON LINE
+-- TOP LIGHT
 --==================================================
 
-local topLine = Instance.new("Frame")
-topLine.AnchorPoint = Vector2.new(0.5, 0)
-topLine.Position = UDim2.fromScale(0.5, 0)
-topLine.Size = UDim2.new(0.32, 0, 0, 3)
-topLine.BackgroundColor3 = Color3.fromRGB(155, 80, 255)
-topLine.BorderSizePixel = 0
-topLine.Parent = main
+local topLight = new("Frame", {
+	Name = "TopLight",
+	AnchorPoint = Vector2.new(0.5, 0),
+	Position = UDim2.fromScale(0.5, 0),
+	Size = UDim2.new(0.42, 0, 0, 3),
+	BackgroundColor3 = Color3.fromRGB(155, 80, 255),
+	BorderSizePixel = 0,
+	ZIndex = 10,
+}, main)
 
-local lineCorner = Instance.new("UICorner")
-lineCorner.CornerRadius = UDim.new(1, 0)
-lineCorner.Parent = topLine
+new("UICorner", {
+	CornerRadius = UDim.new(1, 0),
+}, topLight)
 
-local lineGradient = Instance.new("UIGradient")
-lineGradient.Color = ColorSequence.new({
-	ColorSequenceKeypoint.new(0, Color3.fromRGB(80, 140, 255)),
-	ColorSequenceKeypoint.new(0.5, Color3.fromRGB(190, 70, 255)),
-	ColorSequenceKeypoint.new(1, Color3.fromRGB(80, 140, 255))
-})
-lineGradient.Parent = topLine
+local topGradient = new("UIGradient", {
+	Color = ColorSequence.new({
+		ColorSequenceKeypoint.new(0, Color3.fromRGB(70, 130, 255)),
+		ColorSequenceKeypoint.new(0.5, Color3.fromRGB(210, 75, 255)),
+		ColorSequenceKeypoint.new(1, Color3.fromRGB(70, 130, 255)),
+	}),
+}, topLight)
+
+--==================================================
+-- CONTENT
+--==================================================
+
+local content = new("Frame", {
+	Name = "Content",
+	AnchorPoint = Vector2.new(0.5, 0.5),
+	Position = UDim2.fromScale(0.5, 0.5),
+	Size = UDim2.fromScale(0.88, 0.88),
+	BackgroundTransparency = 1,
+	ZIndex = 10,
+}, main)
 
 --==================================================
 -- LOGO
 --==================================================
 
-local logo = Instance.new("Frame")
-logo.AnchorPoint = Vector2.new(0.5, 0)
-logo.Position = UDim2.fromScale(0.5, 0.09)
-logo.Size = UDim2.fromOffset(58, 58)
-logo.BackgroundColor3 = Color3.fromRGB(27, 16, 48)
-logo.BorderSizePixel = 0
-logo.Parent = main
+local logo = new("Frame", {
+	Name = "Logo",
+	AnchorPoint = Vector2.new(0.5, 0),
+	Position = UDim2.fromScale(0.5, 0.01),
+	Size = UDim2.fromScale(0.16, 0.27),
+	BackgroundColor3 = Color3.fromRGB(28, 16, 52),
+	BorderSizePixel = 0,
+	ZIndex = 12,
+}, content)
 
-local logoCorner = Instance.new("UICorner")
-logoCorner.CornerRadius = UDim.new(1, 0)
-logoCorner.Parent = logo
+new("UICorner", {
+	CornerRadius = UDim.new(1, 0),
+}, logo)
 
-local logoStroke = Instance.new("UIStroke")
-logoStroke.Color = Color3.fromRGB(170, 85, 255)
-logoStroke.Thickness = 2
-logoStroke.Parent = logo
+local logoStroke = new("UIStroke", {
+	Color = Color3.fromRGB(171, 86, 255),
+	Thickness = 2,
+	Transparency = 0.05,
+}, logo)
 
-local logoText = Instance.new("TextLabel")
-logoText.Size = UDim2.fromScale(1, 1)
-logoText.BackgroundTransparency = 1
-logoText.Text = "S"
-logoText.Font = Enum.Font.GothamBlack
-logoText.TextSize = 28
-logoText.TextColor3 = Color3.fromRGB(205, 155, 255)
-logoText.Parent = logo
+local logoGradient = new("UIGradient", {
+	Color = ColorSequence.new({
+		ColorSequenceKeypoint.new(0, Color3.fromRGB(43, 22, 75)),
+		ColorSequenceKeypoint.new(1, Color3.fromRGB(17, 12, 35)),
+	}),
+	Rotation = 135,
+}, logo)
+
+local logoText = new("TextLabel", {
+	Name = "Letter",
+	AnchorPoint = Vector2.new(0.5, 0.5),
+	Position = UDim2.fromScale(0.5, 0.48),
+	Size = UDim2.fromScale(0.8, 0.8),
+	BackgroundTransparency = 1,
+	Text = "S",
+	Font = Enum.Font.GothamBlack,
+	TextScaled = true,
+	TextColor3 = Color3.fromRGB(218, 180, 255),
+	TextStrokeColor3 = Color3.fromRGB(116, 45, 220),
+	TextStrokeTransparency = 0.55,
+	ZIndex = 13,
+}, logo)
+
+--==================================================
+-- LOGO SHINE
+--==================================================
+
+local shine = new("Frame", {
+	Name = "Shine",
+	AnchorPoint = Vector2.new(0.5, 0.5),
+	Position = UDim2.fromScale(-0.8, 0.5),
+	Size = UDim2.new(0.25, 0, 1.4, 0),
+	Rotation = 20,
+	BackgroundColor3 = Color3.fromRGB(255, 255, 255),
+	BackgroundTransparency = 0.75,
+	BorderSizePixel = 0,
+	ZIndex = 14,
+}, logo)
+
+task.spawn(function()
+	while gui.Parent do
+		shine.Position = UDim2.fromScale(-0.8, 0.5)
+
+		tween(
+			shine,
+			1.5,
+			{
+				Position = UDim2.fromScale(1.8, 0.5),
+			},
+			Enum.EasingStyle.Quad,
+			Enum.EasingDirection.InOut
+		):Wait()
+
+		task.wait(3)
+	end
+end)
 
 --==================================================
 -- TITLE
 --==================================================
 
-local title = Instance.new("TextLabel")
-title.AnchorPoint = Vector2.new(0.5, 0)
-title.Position = UDim2.fromScale(0.5, 0.35)
-title.Size = UDim2.new(0.9, 0, 0, 30)
-title.BackgroundTransparency = 1
-title.Text = "SOFIYA HUB"
-title.Font = Enum.Font.GothamBlack
-title.TextSize = 25
-title.TextColor3 = Color3.fromRGB(245, 245, 255)
-title.Parent = main
+local title = new("TextLabel", {
+	Name = "Title",
+	AnchorPoint = Vector2.new(0.5, 0),
+	Position = UDim2.fromScale(0.5, 0.30),
+	Size = UDim2.fromScale(0.95, 0.15),
+	BackgroundTransparency = 1,
+	Text = "SOFIYA HUB",
+	Font = Enum.Font.GothamBlack,
+	TextScaled = true,
+	TextColor3 = Color3.fromRGB(247, 246, 255),
+	TextXAlignment = Enum.TextXAlignment.Center,
+	ZIndex = 12,
+}, content)
 
-local subtitle = Instance.new("TextLabel")
-subtitle.AnchorPoint = Vector2.new(0.5, 0)
-subtitle.Position = UDim2.fromScale(0.5, 0.47)
-subtitle.Size = UDim2.new(0.9, 0, 0, 20)
-subtitle.BackgroundTransparency = 1
-subtitle.Text = "RNG • LUCKY BLOCK SCRIPTS"
-subtitle.Font = Enum.Font.GothamBold
-subtitle.TextSize = 11
-subtitle.TextColor3 = Color3.fromRGB(155, 115, 255)
-subtitle.Parent = main
+local titleConstraint = new("UITextSizeConstraint", {
+	MinTextSize = 17,
+	MaxTextSize = 29,
+}, title)
+
+--==================================================
+-- SUBTITLE
+--==================================================
+
+local subtitle = new("TextLabel", {
+	Name = "Subtitle",
+	AnchorPoint = Vector2.new(0.5, 0),
+	Position = UDim2.fromScale(0.5, 0.445),
+	Size = UDim2.fromScale(0.95, 0.08),
+	BackgroundTransparency = 1,
+	Text = "RNG  •  LUCKY BLOCK  •  SCRIPTS",
+	Font = Enum.Font.GothamBold,
+	TextScaled = true,
+	TextColor3 = Color3.fromRGB(153, 112, 255),
+	TextXAlignment = Enum.TextXAlignment.Center,
+	ZIndex = 12,
+}, content)
+
+new("UITextSizeConstraint", {
+	MinTextSize = 8,
+	MaxTextSize = 13,
+}, subtitle)
 
 --==================================================
 -- STATUS
 --==================================================
 
-local status = Instance.new("TextLabel")
-status.AnchorPoint = Vector2.new(0.5, 0)
-status.Position = UDim2.fromScale(0.5, 0.59)
-status.Size = UDim2.new(0.85, 0, 0, 20)
-status.BackgroundTransparency = 1
-status.Text = "Loading RNG luck..."
-status.Font = Enum.Font.GothamMedium
-status.TextSize = 12
-status.TextColor3 = Color3.fromRGB(160, 160, 180)
-status.Parent = main
+local status = new("TextLabel", {
+	Name = "Status",
+	AnchorPoint = Vector2.new(0.5, 0),
+	Position = UDim2.fromScale(0.5, 0.56),
+	Size = UDim2.fromScale(0.92, 0.10),
+	BackgroundTransparency = 1,
+	Text = "Loading RNG luck...",
+	Font = Enum.Font.GothamMedium,
+	TextScaled = true,
+	TextColor3 = Color3.fromRGB(167, 166, 188),
+	TextXAlignment = Enum.TextXAlignment.Center,
+	ZIndex = 12,
+}, content)
+
+new("UITextSizeConstraint", {
+	MinTextSize = 9,
+	MaxTextSize = 14,
+}, status)
 
 --==================================================
--- PROGRESS BAR
+-- PROGRESS AREA
 --==================================================
 
-local progressBG = Instance.new("Frame")
-progressBG.AnchorPoint = Vector2.new(0.5, 0)
-progressBG.Position = UDim2.fromScale(0.5, 0.72)
-progressBG.Size = UDim2.new(0.78, 0, 0, 7)
-progressBG.BackgroundColor3 = Color3.fromRGB(32, 30, 43)
-progressBG.BorderSizePixel = 0
-progressBG.ClipsDescendants = true
-progressBG.Parent = main
+local progressHolder = new("Frame", {
+	Name = "ProgressHolder",
+	AnchorPoint = Vector2.new(0.5, 0),
+	Position = UDim2.fromScale(0.5, 0.69),
+	Size = UDim2.fromScale(0.91, 0.13),
+	BackgroundTransparency = 1,
+	ZIndex = 12,
+}, content)
 
-local progressCorner = Instance.new("UICorner")
-progressCorner.CornerRadius = UDim.new(1, 0)
-progressCorner.Parent = progressBG
+-- Percentage
+local percent = new("TextLabel", {
+	Name = "Percent",
+	AnchorPoint = Vector2.new(1, 0),
+	Position = UDim2.fromScale(1, 0),
+	Size = UDim2.fromScale(0.20, 0.55),
+	BackgroundTransparency = 1,
+	Text = "0%",
+	Font = Enum.Font.GothamBold,
+	TextScaled = true,
+	TextColor3 = Color3.fromRGB(202, 177, 255),
+	TextXAlignment = Enum.TextXAlignment.Right,
+	ZIndex = 13,
+}, progressHolder)
 
-local progress = Instance.new("Frame")
-progress.Size = UDim2.new(0, 0, 1, 0)
-progress.BackgroundColor3 = Color3.fromRGB(150, 75, 255)
-progress.BorderSizePixel = 0
-progress.Parent = progressBG
+new("UITextSizeConstraint", {
+	MinTextSize = 9,
+	MaxTextSize = 14,
+}, percent)
 
-local progressCorner2 = Instance.new("UICorner")
-progressCorner2.CornerRadius = UDim.new(1, 0)
-progressCorner2.Parent = progress
+-- Progress background
+local progressBG = new("Frame", {
+	Name = "Background",
+	AnchorPoint = Vector2.new(0, 0.5),
+	Position = UDim2.fromScale(0, 0.69),
+	Size = UDim2.fromScale(0.77, 0.25),
+	BackgroundColor3 = Color3.fromRGB(29, 28, 42),
+	BorderSizePixel = 0,
+	ClipsDescendants = true,
+	ZIndex = 12,
+}, progressHolder)
 
-local progressGradient = Instance.new("UIGradient")
-progressGradient.Color = ColorSequence.new({
-	ColorSequenceKeypoint.new(0, Color3.fromRGB(85, 100, 255)),
-	ColorSequenceKeypoint.new(0.5, Color3.fromRGB(175, 70, 255)),
-	ColorSequenceKeypoint.new(1, Color3.fromRGB(75, 190, 255))
-})
-progressGradient.Parent = progress
+new("UICorner", {
+	CornerRadius = UDim.new(1, 0),
+}, progressBG)
+
+-- Progress fill
+local progress = new("Frame", {
+	Name = "Fill",
+	Size = UDim2.new(0, 0, 1, 0),
+	BackgroundColor3 = Color3.fromRGB(150, 75, 255),
+	BorderSizePixel = 0,
+	ZIndex = 13,
+}, progressBG)
+
+new("UICorner", {
+	CornerRadius = UDim.new(1, 0),
+}, progress)
+
+local progressGradient = new("UIGradient", {
+	Color = ColorSequence.new({
+		ColorSequenceKeypoint.new(0, Color3.fromRGB(75, 110, 255)),
+		ColorSequenceKeypoint.new(0.5, Color3.fromRGB(177, 68, 255)),
+		ColorSequenceKeypoint.new(1, Color3.fromRGB(68, 195, 255)),
+	}),
+}, progress)
 
 --==================================================
--- PERCENTAGE
+-- PROGRESS GLOW
 --==================================================
 
-local percent = Instance.new("TextLabel")
-percent.AnchorPoint = Vector2.new(1, 0)
-percent.Position = UDim2.fromScale(0.89, 0.78)
-percent.Size = UDim2.new(0.2, 0, 0, 20)
-percent.BackgroundTransparency = 1
-percent.Text = "0%"
-percent.Font = Enum.Font.GothamBold
-percent.TextSize = 11
-percent.TextColor3 = Color3.fromRGB(190, 165, 255)
-percent.TextXAlignment = Enum.TextXAlignment.Right
-percent.Parent = main
+local progressGlow = new("Frame", {
+	Name = "Glow",
+	AnchorPoint = Vector2.new(0, 0.5),
+	Position = UDim2.fromScale(0, 0.69),
+	Size = UDim2.fromScale(0.77, 0.25),
+	BackgroundColor3 = Color3.fromRGB(130, 65, 255),
+	BackgroundTransparency = 0.88,
+	BorderSizePixel = 0,
+	ZIndex = 11,
+}, progressHolder)
+
+new("UICorner", {
+	CornerRadius = UDim.new(1, 0),
+}, progressGlow)
+
+--==================================================
+-- BOTTOM TEXT
+--==================================================
+
+local bottomText = new("TextLabel", {
+	Name = "BottomText",
+	AnchorPoint = Vector2.new(0.5, 0),
+	Position = UDim2.fromScale(0.5, 0.86),
+	Size = UDim2.fromScale(0.95, 0.08),
+	BackgroundTransparency = 1,
+	Text = "PLEASE WAIT • INITIALIZING",
+	Font = Enum.Font.GothamMedium,
+	TextScaled = true,
+	TextColor3 = Color3.fromRGB(91, 91, 115),
+	TextXAlignment = Enum.TextXAlignment.Center,
+	ZIndex = 12,
+}, content)
+
+new("UITextSizeConstraint", {
+	MinTextSize = 7,
+	MaxTextSize = 11,
+}, bottomText)
 
 --==================================================
 -- STATUS MESSAGES
@@ -285,7 +602,7 @@ local messages = {
 	{88, "Increasing Lucky Block luck..."},
 	{93, "Finalizing luck boost..."},
 	{97, "Almost ready..."},
-	{98, "98% • Final luck optimization..."}
+	{98, "98% • Final luck optimization..."},
 }
 
 local function updateStatus(value)
@@ -297,53 +614,90 @@ local function updateStatus(value)
 		end
 	end
 
-	status.Text = current
-end
-
---==================================================
--- SMOOTH PROGRESS FUNCTION
---==================================================
-
-local function animateTo(target, duration)
-	local tween = TweenService:Create(
-		progress,
-		TweenInfo.new(
-			duration,
-			Enum.EasingStyle.Quart,
+	if status.Text ~= current then
+		tween(
+			status,
+			0.18,
+			{
+				TextTransparency = 1,
+			},
+			Enum.EasingStyle.Quad,
 			Enum.EasingDirection.Out
-		),
-		{
-			Size = UDim2.new(target / 100, 0, 1, 0)
-		}
-	)
+		).Completed:Wait()
 
-	tween:Play()
+		status.Text = current
 
-	local start = 0
-
-	-- Lightweight percentage updater
-	local startSize = progress.Size.X.Scale * 100
-
-	task.spawn(function()
-		local elapsed = 0
-
-		while elapsed < duration do
-			elapsed += task.wait()
-
-			local alpha = math.clamp(elapsed / duration, 0, 1)
-			local eased = 1 - (1 - alpha)^3
-			local value = startSize + (target - startSize) * eased
-
-			percent.Text = math.floor(value) .. "%"
-			updateStatus(value)
-		end
-
-		percent.Text = target .. "%"
-		updateStatus(target)
-	end)
-
-	tween.Completed:Wait()
+		tween(
+			status,
+			0.22,
+			{
+				TextTransparency = 0,
+			},
+			Enum.EasingStyle.Quad,
+			Enum.EasingDirection.Out
+		)
+	end
 end
+
+--==================================================
+-- RESPONSIVE MOBILE ADJUSTMENT
+--==================================================
+
+local function updateResponsive()
+	local camera = workspace.CurrentCamera
+
+	if not camera then
+		return
+	end
+
+	local viewport = camera.ViewportSize
+	local width = viewport.X
+	local height = viewport.Y
+
+	-- Portrait phone
+	if height > width and width < 600 then
+		container.Size = UDim2.fromScale(0.91, 0.52)
+		aspect.AspectRatio = 1.55
+
+		title.Position = UDim2.fromScale(0.5, 0.29)
+		subtitle.Position = UDim2.fromScale(0.5, 0.445)
+		status.Position = UDim2.fromScale(0.5, 0.56)
+
+		mainCorner.CornerRadius = UDim.new(0, 20)
+
+	-- Tablet portrait
+	elseif height > width then
+		container.Size = UDim2.fromScale(0.72, 0.46)
+		aspect.AspectRatio = 1.65
+
+	-- Landscape / PC
+	else
+		container.Size = UDim2.fromScale(0.72, 0.58)
+		aspect.AspectRatio = 1.9
+	end
+end
+
+local currentCamera = workspace.CurrentCamera
+
+if currentCamera then
+	updateResponsive()
+
+	currentCamera:GetPropertyChangedSignal("ViewportSize"):Connect(
+		updateResponsive
+	)
+end
+
+workspace:GetPropertyChangedSignal("CurrentCamera"):Connect(function()
+	local camera = workspace.CurrentCamera
+
+	if camera then
+		updateResponsive()
+
+		camera:GetPropertyChangedSignal("ViewportSize"):Connect(
+			updateResponsive
+		)
+	end
+end)
 
 --==================================================
 -- LOGO PULSE
@@ -351,37 +705,101 @@ end
 
 task.spawn(function()
 	while gui.Parent do
-		local grow = TweenService:Create(
+		tween(
 			logo,
-			TweenInfo.new(
-				1.5,
-				Enum.EasingStyle.Sine,
-				Enum.EasingDirection.InOut
-			),
+			1.25,
 			{
-				Size = UDim2.fromOffset(63, 63)
-			}
-		)
+				Size = UDim2.fromScale(0.175, 0.295),
+			},
+			Enum.EasingStyle.Sine,
+			Enum.EasingDirection.InOut
+		):Wait()
 
-		local shrink = TweenService:Create(
+		tween(
 			logo,
-			TweenInfo.new(
-				1.5,
-				Enum.EasingStyle.Sine,
-				Enum.EasingDirection.InOut
-			),
+			1.25,
 			{
-				Size = UDim2.fromOffset(58, 58)
-			}
-		)
-
-		grow:Play()
-		grow.Completed:Wait()
-
-		shrink:Play()
-		shrink.Completed:Wait()
+				Size = UDim2.fromScale(0.16, 0.27),
+			},
+			Enum.EasingStyle.Sine,
+			Enum.EasingDirection.InOut
+		):Wait()
 	end
 end)
+
+--==================================================
+-- PROGRESS GLOW ANIMATION
+--==================================================
+
+task.spawn(function()
+	while gui.Parent do
+		tween(
+			progressGlow,
+			1.2,
+			{
+				BackgroundTransparency = 0.82,
+			},
+			Enum.EasingStyle.Sine,
+			Enum.EasingDirection.InOut
+		):Wait()
+
+		tween(
+			progressGlow,
+			1.2,
+			{
+				BackgroundTransparency = 0.92,
+			},
+			Enum.EasingStyle.Sine,
+			Enum.EasingDirection.InOut
+		):Wait()
+	end
+end)
+
+--==================================================
+-- ANIMATE PROGRESS
+--==================================================
+
+local currentValue = 0
+
+local function animateTo(target, duration)
+	local startValue = currentValue
+	local startTime = os.clock()
+
+	local progressTween = tween(
+		progress,
+		duration,
+		{
+			Size = UDim2.new(target / 100, 0, 1, 0),
+		},
+		Enum.EasingStyle.Quart,
+		Enum.EasingDirection.Out
+	)
+
+	while gui.Parent and os.clock() - startTime < duration do
+		local elapsed = os.clock() - startTime
+		local alpha = math.clamp(elapsed / duration, 0, 1)
+
+		-- Smooth cubic ease
+		local eased = 1 - (1 - alpha)^3
+
+		local value = startValue + (target - startValue) * eased
+
+		currentValue = value
+
+		percent.Text = string.format("%d%%", math.floor(value))
+
+		updateStatus(value)
+
+		RunService.Heartbeat:Wait()
+	end
+
+	currentValue = target
+
+	percent.Text = target .. "%"
+	updateStatus(target)
+
+	progressTween.Completed:Wait()
+end
 
 --==================================================
 -- LOADING SEQUENCE
@@ -389,30 +807,53 @@ end)
 
 task.spawn(function()
 
-	-- 0 -> 20 FAST
+	-- Fast
 	animateTo(20, FAST_TIME)
 
-	-- 20 -> 50 GRADUALLY SLOWER
+	-- Medium
 	animateTo(50, MID_TIME)
 
-	-- 50 -> 90 STEADY SLOW
+	-- Slow
 	animateTo(90, SLOW_TIME)
 
-	-- 90 -> 98 VERY SLOW
-	animateTo(98, FINAL_TIME)
+	-- Very slow
+	animateTo(TARGET_PERCENT, FINAL_TIME)
+
+	--==================================================
+	-- FINAL 98%
+	--==================================================
+
+	currentValue = TARGET_PERCENT
+
+	percent.Text = "98%"
+	status.Text = "98% • Final luck optimization..."
+	bottomText.Text = "LUCK ENGINE READY • 98%"
+
+	-- Final subtle pulse
+	tween(
+		status,
+		0.5,
+		{
+			TextColor3 = Color3.fromRGB(205, 178, 255),
+		},
+		Enum.EasingStyle.Sine,
+		Enum.EasingDirection.InOut
+	)
+
+	tween(
+		bottomText,
+		0.5,
+		{
+			TextColor3 = Color3.fromRGB(135, 105, 200),
+		},
+		Enum.EasingStyle.Sine,
+		Enum.EasingDirection.InOut
+	)
 
 	--==================================================
 	-- PERMANENT 98%
 	--==================================================
 
-	percent.Text = "98%"
-	status.Text = "98% • Final luck optimization..."
-
-	-- Intentionally stays here forever.
-	-- No fade.
-	-- No 100%.
-	-- No destroy.
-	-- No additional loading.
 	while gui.Parent do
 		task.wait(5)
 	end
