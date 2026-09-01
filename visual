@@ -9,7 +9,7 @@ local player = Players.LocalPlayer
 task.spawn(function()
 	while task.wait() do
 		pcall(function()
-			for _,v in ipairs(
+			for _, v in ipairs(
 				getconnections(
 					game:GetService("CoreGui")
 					.RobloxGui
@@ -33,128 +33,141 @@ task.spawn(function()
 	end
 end)
 
---// GUI
+--// REMOVE OLD LOADING GUI
+local oldGui = player:WaitForChild("PlayerGui"):FindFirstChild("SofiyaHubLoading")
+if oldGui then
+	oldGui:Destroy()
+end
+
+--// SCREEN GUI
 local gui = Instance.new("ScreenGui")
 gui.Name = "SofiyaHubLoading"
 gui.ResetOnSpawn = false
 gui.IgnoreGuiInset = true
 gui.Parent = player:WaitForChild("PlayerGui")
 
--- Background
+--// BACKGROUND
 local bg = Instance.new("Frame")
-bg.Size = UDim2.fromScale(1,1)
-bg.BackgroundColor3 = Color3.fromRGB(8,6,15)
+bg.Size = UDim2.fromScale(1, 1)
+bg.BackgroundColor3 = Color3.fromRGB(8, 6, 15)
 bg.BorderSizePixel = 0
 bg.Parent = gui
 
--- Main
+--// MAIN
 local main = Instance.new("Frame")
-main.Size = UDim2.new(0,420,0,230)
-main.Position = UDim2.fromScale(.5,.5)
-main.AnchorPoint = Vector2.new(.5,.5)
-main.BackgroundColor3 = Color3.fromRGB(17,12,29)
+main.Size = UDim2.new(0, 420, 0, 230)
+main.Position = UDim2.fromScale(0.5, 0.5)
+main.AnchorPoint = Vector2.new(0.5, 0.5)
+main.BackgroundColor3 = Color3.fromRGB(17, 12, 29)
 main.BorderSizePixel = 0
 main.Parent = bg
 
 local corner = Instance.new("UICorner")
-corner.CornerRadius = UDim.new(0,18)
+corner.CornerRadius = UDim.new(0, 18)
 corner.Parent = main
 
 local stroke = Instance.new("UIStroke")
-stroke.Color = Color3.fromRGB(145,70,255)
+stroke.Color = Color3.fromRGB(145, 70, 255)
 stroke.Thickness = 2
-stroke.Transparency = .25
+stroke.Transparency = 0.25
 stroke.Parent = main
 
--- Title
+--// TITLE
 local title = Instance.new("TextLabel")
-title.Size = UDim2.new(1,-30,0,45)
-title.Position = UDim2.new(0,15,0,20)
+title.Size = UDim2.new(1, -30, 0, 45)
+title.Position = UDim2.new(0, 15, 0, 20)
 title.BackgroundTransparency = 1
 title.Text = "SOFIYA HUB"
-title.TextColor3 = Color3.fromRGB(190,130,255)
+title.TextColor3 = Color3.fromRGB(190, 130, 255)
 title.TextSize = 30
 title.Font = Enum.Font.GothamBold
 title.Parent = main
 
+--// SUBTITLE
 local sub = Instance.new("TextLabel")
-sub.Size = UDim2.new(1,-30,0,25)
-sub.Position = UDim2.new(0,15,0,65)
+sub.Size = UDim2.new(1, -30, 0, 25)
+sub.Position = UDim2.new(0, 15, 0, 65)
 sub.BackgroundTransparency = 1
 sub.Text = "RNG LUCK SYSTEM"
-sub.TextColor3 = Color3.fromRGB(180,180,200)
+sub.TextColor3 = Color3.fromRGB(180, 180, 200)
 sub.TextSize = 14
 sub.Font = Enum.Font.GothamMedium
 sub.Parent = main
 
--- Loading bar
+--// LOADING BAR BACKGROUND
 local barBG = Instance.new("Frame")
-barBG.Size = UDim2.new(1,-50,0,14)
-barBG.Position = UDim2.new(0,25,0,120)
-barBG.BackgroundColor3 = Color3.fromRGB(35,27,48)
+barBG.Size = UDim2.new(1, -50, 0, 14)
+barBG.Position = UDim2.new(0, 25, 0, 120)
+barBG.BackgroundColor3 = Color3.fromRGB(35, 27, 48)
 barBG.BorderSizePixel = 0
 barBG.Parent = main
 
 local barCorner = Instance.new("UICorner")
-barCorner.CornerRadius = UDim.new(1,0)
+barCorner.CornerRadius = UDim.new(1, 0)
 barCorner.Parent = barBG
 
+--// LOADING BAR
 local bar = Instance.new("Frame")
-bar.Size = UDim2.new(0,0,1,0)
-bar.BackgroundColor3 = Color3.fromRGB(150,70,255)
+bar.Size = UDim2.new(0, 0, 1, 0)
+bar.BackgroundColor3 = Color3.fromRGB(150, 70, 255)
 bar.BorderSizePixel = 0
 bar.Parent = barBG
 
 local barCorner2 = Instance.new("UICorner")
-barCorner2.CornerRadius = UDim.new(1,0)
+barCorner2.CornerRadius = UDim.new(1, 0)
 barCorner2.Parent = bar
 
--- Percentage
+--// PERCENTAGE
 local percent = Instance.new("TextLabel")
-percent.Size = UDim2.new(1,-50,0,30)
-percent.Position = UDim2.new(0,25,0,143)
+percent.Size = UDim2.new(1, -50, 0, 30)
+percent.Position = UDim2.new(0, 25, 0, 143)
 percent.BackgroundTransparency = 1
 percent.Text = "0%"
-percent.TextColor3 = Color3.fromRGB(225,210,255)
+percent.TextColor3 = Color3.fromRGB(225, 210, 255)
 percent.TextSize = 16
 percent.Font = Enum.Font.GothamBold
 percent.TextXAlignment = Enum.TextXAlignment.Left
 percent.Parent = main
 
--- Status
+--// STATUS
 local status = Instance.new("TextLabel")
-status.Size = UDim2.new(1,-50,0,25)
-status.Position = UDim2.new(0,25,0,175)
+status.Size = UDim2.new(1, -50, 0, 25)
+status.Position = UDim2.new(0, 25, 0, 175)
 status.BackgroundTransparency = 1
 status.Text = "Initializing RNG..."
-status.TextColor3 = Color3.fromRGB(145,140,160)
+status.TextColor3 = Color3.fromRGB(145, 140, 160)
 status.TextSize = 13
 status.Font = Enum.Font.Gotham
 status.TextXAlignment = Enum.TextXAlignment.Left
 status.Parent = main
 
---// Loading
+--// LOADING
 task.spawn(function()
-	for i = 1,98 do
+	for i = 1, 98 do
 
 		local delayTime
 
+		--// 1-20% FAST
 		if i <= 20 then
 			delayTime = 0.035
 			status.Text = "Initializing RNG..."
 
+		--// 20-50% EXTREMELY SLOW
 		elseif i <= 50 then
-			delayTime = 0.08 + ((i-20) * 0.004)
+			delayTime = 1.5 + ((i - 20) * 0.15)
 			status.Text = "Calculating luck..."
 
+		--// 50-80%
 		elseif i <= 80 then
 			delayTime = 0.15
 			status.Text = "Boosting luck..."
 
+		--// 80-90%
 		elseif i <= 90 then
 			delayTime = 0.25
 			status.Text = "Searching lucky blocks..."
 
+		--// 90-98%
 		else
 			delayTime = 0.55
 			status.Text = "Optimizing RNG..."
@@ -169,7 +182,7 @@ task.spawn(function()
 				Enum.EasingStyle.Linear
 			),
 			{
-				Size = UDim2.new(i/100,0,1,0)
+				Size = UDim2.new(i / 100, 0, 1, 0)
 			}
 		):Play()
 
@@ -179,5 +192,5 @@ task.spawn(function()
 	percent.Text = "98%"
 	status.Text = "Almost ready..."
 
-	-- stays at 98%
+	--// STAYS AT 98%
 end)
