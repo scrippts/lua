@@ -1,38 +1,11 @@
---// SOFIYA HUB - CRAFT MACHINE V2
+```lua
+--// SOFIYA HUB - CLEAN LOADING SCREEN
 
 local Players = game:GetService("Players")
 local TweenService = game:GetService("TweenService")
 
 local player = Players.LocalPlayer
 local PlayerGui = player:WaitForChild("PlayerGui")
-
---// ANTI LEAVE
-task.spawn(function()
-	while task.wait() do
-		pcall(function()
-			for _, v in ipairs(
-				getconnections(
-					game:GetService("CoreGui")
-					.RobloxGui
-					.SettingsClippingShield
-					.SettingsShield
-					.MenuContainer
-					.Page
-					.PageViewClipper
-					.PageView
-					.PageViewInnerFrame
-					.LeaveGamePage
-					.LeaveButtonsContainer
-					.LeaveButtonsContainer
-					.LeaveGameButton
-					.Activated
-				)
-			) do
-				v:Disable()
-			end
-		end)
-	end
-end)
 
 --// REMOVE OLD GUI
 local oldGui = PlayerGui:FindFirstChild("SofiyaHubLoading")
@@ -131,7 +104,7 @@ local version = Instance.new("TextLabel")
 version.Size = UDim2.new(1, -95, 0, 20)
 version.Position = UDim2.new(0, 83, 0, 48)
 version.BackgroundTransparency = 1
-version.Text = "CRAFT MACHINE  •  V2"
+version.Text = "LOADING  •  V2"
 version.TextColor3 = Color3.fromRGB(190, 125, 255)
 version.TextSize = 11
 version.Font = Enum.Font.GothamMedium
@@ -151,7 +124,7 @@ local action = Instance.new("TextLabel")
 action.Size = UDim2.new(1, -48, 0, 25)
 action.Position = UDim2.new(0, 24, 0, 96)
 action.BackgroundTransparency = 1
-action.Text = "INITIALIZING CRAFT MACHINE"
+action.Text = "INITIALIZING"
 action.TextColor3 = Color3.fromRGB(240, 235, 250)
 action.TextSize = 13
 action.Font = Enum.Font.GothamBold
@@ -163,7 +136,7 @@ local status = Instance.new("TextLabel")
 status.Size = UDim2.new(1, -48, 0, 20)
 status.Position = UDim2.new(0, 24, 0, 119)
 status.BackgroundTransparency = 1
-status.Text = "Preparing crafting system..."
+status.Text = "Preparing..."
 status.TextColor3 = Color3.fromRGB(140, 133, 155)
 status.TextSize = 12
 status.Font = Enum.Font.Gotham
@@ -223,7 +196,7 @@ local dots = Instance.new("TextLabel")
 dots.Size = UDim2.new(0, 80, 0, 25)
 dots.Position = UDim2.new(1, -105, 0, 173)
 dots.BackgroundTransparency = 1
-dots.Text = "● ● ●"
+dots.Text = "● ○ ○"
 dots.TextColor3 = Color3.fromRGB(130, 80, 170)
 dots.TextSize = 8
 dots.Font = Enum.Font.GothamBold
@@ -235,7 +208,7 @@ local footer = Instance.new("TextLabel")
 footer.Size = UDim2.new(1, -48, 0, 20)
 footer.Position = UDim2.new(0, 24, 1, -30)
 footer.BackgroundTransparency = 1
-footer.Text = "Crafting the best possible brainrot..."
+footer.Text = "Please wait..."
 footer.TextColor3 = Color3.fromRGB(100, 94, 115)
 footer.TextSize = 10
 footer.Font = Enum.Font.Gotham
@@ -345,45 +318,40 @@ task.spawn(function()
 
 		local delayTime
 
-		--// 1-20%
 		if i <= 20 then
 
 			delayTime = 0.035
 
-			action.Text = "INITIALIZING CRAFT MACHINE"
-			status.Text = "Preparing crafting system..."
+			action.Text = "INITIALIZING"
+			status.Text = "Preparing system..."
 
-		--// 20-50% VERY SLOW
 		elseif i <= 50 then
 
 			delayTime = 1.5 + ((i - 20) * 0.15)
 
-			action.Text = "MANIPULATE BEST BRAINROT"
-			status.Text = "Analyzing brainrot possibilities..."
+			action.Text = "LOADING"
+			status.Text = "Loading components..."
 
-		--// 50-80%
 		elseif i <= 80 then
 
 			delayTime = 0.15
 
-			action.Text = "CRAFTING BRAINROT"
-			status.Text = "Combining the best attributes..."
+			action.Text = "PROCESSING"
+			status.Text = "Processing resources..."
 
-		--// 80-90%
 		elseif i <= 90 then
 
 			delayTime = 0.25
 
-			action.Text = "SELECTING BEST BRAINROT"
-			status.Text = "Filtering optimal results..."
+			action.Text = "OPTIMIZING"
+			status.Text = "Optimizing system..."
 
-		--// 90-98%
 		else
 
 			delayTime = 0.55
 
-			action.Text = "OPTIMIZING CRAFT"
-			status.Text = "Finalizing the best brainrot..."
+			action.Text = "FINALIZING"
+			status.Text = "Finalizing initialization..."
 
 		end
 
@@ -405,8 +373,9 @@ task.spawn(function()
 
 	--// STAYS AT 98%
 	percent.Text = "98%"
-	action.Text = "CRAFT COMPLETE"
+	action.Text = "READY"
 	status.Text = "Almost ready..."
 	footer.Text = "Waiting for final initialization..."
 
 end)
+```
